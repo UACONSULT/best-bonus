@@ -1,0 +1,49 @@
+
+
+{% if bonuses %}   
+    <div class='contentMeta text-center'>
+        <h3>Лучшие бонусы({{ bonuses_count }})</h3>
+    </div>
+    <!-- Card block -->
+    <div class="cardBlock">
+
+        {% for bonus in bonuses %}
+        
+        <!-- Card element -->
+        <div class='card'>
+            <!-- Casino image -->
+            {% if bonus.image %}
+                <img src="{{ bonus.image.url }}" alt="{{ bonus.suplier }}">
+            {% else %}
+                <img src="{{ bonus.suplier.image.url }}" alt="{{ bonus.suplier }}">
+            {% endif %}
+            <h2>{{ bonus.two_word_desc }}</h2>
+            <div class='card-meta-info'>
+                <!-- <hr> -->
+                <p>Депозит:  {% if bonus.dep_bool %} {{ bonus.dep }} {% else %} {{ bonus.bonus_bool|yesno:'Да,Нет,Мб' }} {% endif %}</p>
+                <p>Вагер {{ bonus.wager }}  Тип: {{ bonus.bonus_type }}</p>
+                <p>Добавлен: {{ bonus.doa }} <br> Срок жизни:{{ bonus.tll }} </p>
+
+            </div>
+            <p>{{ bonus.bonus_desc }}</p>
+            
+            <a href="">Другие бонусы от <span>{{ bonus.suplier }}</span></a>
+    
+            <a href=""><button class='card-button'>ЗАБРАТЬ</button></a>
+        </div>
+        <!-- /Card element -->
+        {% endfor %}
+    </div>
+            
+    <!-- Paginator -->
+    {% if bonuses.has_next %}
+    <div class='paginateBlock'>
+        <button id='paginatorButton1' class='paginateButton'>БОЛЬШЕ</button>
+    </div>
+    {% endif %}
+    <!-- /Paginator -->
+    {% else %}
+    <div class='contentMeta text-center'>
+            <h3>Бонусов не найдено ):</h3>
+        </div>
+    {% endif%}
