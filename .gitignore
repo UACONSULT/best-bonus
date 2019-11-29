@@ -1,1 +1,14 @@
+# django db
+.DS_Store
 *.sqlite3
+media/
+*.pyc
+*.db
+*.pid
+# django migrations 
+**/migrations/**
+!**/migrations
+!**/migrations/__init__.py
+
+# Cruft crap
+super_static_backup/
