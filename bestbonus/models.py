@@ -2,13 +2,12 @@ import datetime
 
 from django.db import models
 from django.db.models import Q
-
+from django.core.validators import MaxValueValidator
 
 SUPLIER_TYPES = (
     (0, 'Casino'),
     (1, 'Betting'),
     (2, 'CS:GO'),
-    (3, 'Other'),
 
 )
 
@@ -19,44 +18,36 @@ BONUS_TYPES = (
 )
 
 
+'''
+Suplier/Casino entity describes app/compnay/resource what distributes bonuses.
+e.g. Online casino, Betting company, Gambling app, .......
+
+'''
 class Suplier(models.Model):
-    '''
-    Suplier/Casino entity describes app/compnay/resource what distributes bonuses.
-    e.g. Online casino, Betting company, Gambling app, .......
-    
-    '''
 
-
-
-    title = models.CharField(max_length=100, verbose_name="Name")
+    title = models.CharField(max_length=100, unique=True, null=False, blank=False, verbose_name="Name")
     image = models.ImageField(upload_to="casino_logos/", blank=True, null=True, verbose_name="Suplier image")
     
-    ca_license_bool = models.BooleanField(max_length=100, default=False, \
-        verbose_name="License Y/N")
+    ca_license_bool = models.BooleanField(default=False, verbose_name="License")
     suplier_type = models.IntegerField(choices=SUPLIER_TYPES, default=0)
+
 
     def __str__(self):
         return self.title
 
 
-
-
-
-
-
-
+'''
+Bonus entity bonus with some informative attributes for gambling dawgs
+e.g. 100% No dep bonus for 365bet.......
+    
+'''
 class Bonus(models.Model):
-    '''
-    Bonus entity bonus with some informative attributes for gambling dawgs
-    e.g. 100% No dep bonus for 365bet.......
+    two_word_desc = models.CharField(max_length=300, blank=False, verbose_name="About the bonus in 2 words")    
     
-    '''
-
-    two_word_desc = models.CharField(max_length= 300, verbose_name="About the bonus in 2 words", blank=False)    
-    
-    bonus_digit = models.PositiveSmallIntegerField(verbose_name="Bonus value")
-    bonus_desc = models.TextField(blank=True, verbose_name="Bonus description")
-
+# If we have freespin for example, the value should be equals zero
+    bonus_digit = models.PositiveSmallIntegerField(default=0, validators=[MaxValueValidator(1000000)],\
+        verbose_name="Bonus value")
+    bonus_desc = models.TextField(max_length=1500, blank=True, null=True, verbose_name="Bonus description")
     suplier = models.ForeignKey(Suplier, on_delete=models.CASCADE)
     image = models.ImageField(upload_to='bonus_images/', blank=True, null=True, verbose_name='Bonus image')
 
@@ -66,11 +57,44 @@ class Bonus(models.Model):
 
 # Date of adding
     doa = models.DateField(default=datetime.date.today)
-    ttl = models.SmallIntegerField(default=7, blank=True, null=True, verbose_name='Amount of days to bonus expiring')
+# Date of expiring    
+    doe = models.DateField(blank=True, null=True, verbose_name="Date of expiring")
 
-
-    wager = models.SmallIntegerField(default=0, blank=True, verbose_name='Bonus wager')
+    wager = models.SmallIntegerField(default=0, blank=True, \
+        validators=[MaxValueValidator(100)], verbose_name='Bonus wager')
     bonus_type = models.IntegerField(choices=BONUS_TYPES, default=0)
+
+
+# Shows time-to-live of bonus(how much time you have to use the bonus til it expires)
+# Checks DOE is not less than DOA. If it less it returns None.
+# Returns datetime.date
+    def ttl_full(self):
+        try:
+            if self.doe < self.doa:
+                print('....Bonus expired!')
+                return None
+            ttl_obj = self.doe - self.doa
+            return ttl_obj
+        except:
+            print('....Some exception raised!!!')
+            return None
+
+# Method retuns time-to-live bonus value in days
+# Calls ttl_full methond(because it checks DOE and DOA distinction)
+    def ttl_days(self):
+        date_object = self.ttl_full()
+        return date_object.days
+
+# Method retuns time-to-live bonus value in hours
+    def ttl_hours(self):
+        date_object = self.ttl_full()
+        return date_object.days * 24
+
+
+# Returns other bonuses of instance casino
+    def otherBonuses(self):
+        suplier_instance = self.suplier.bonus_set.all()
+        return suplier_instance
 
     class Meta:
         ordering = ['-bonus_digit']
@@ -80,11 +104,7 @@ class Bonus(models.Model):
 
 
 
-# Returns other bonuses of instance casino
-    def otherBonuses(self):
-        suplier_instance = self.suplier.bonus_set.all()
 
-        return suplier_instance
 
 
 
@@ -96,13 +116,6 @@ def depositRange(value1, value2):
     values_sum = values_up.intersection(values_down)
     
     return values_sum
-
-# Отрезок по размеру бонуса. value1 - мин значение, value2 - макс значение
-def bonusRange(value1, value2):
-    pass
-
-
-
 
 
 # Sorting

@@ -51,8 +51,11 @@ python manage.py runscript create_mock --script-args 100 10
 
 """
 import sys
-from random import randrange, randint, choice
+import datetime
 from loremipsum import get_sentence
+from random import randrange, randint, choice
+
+from django.utils import timezone
 
 from bestbonus import models
 
@@ -80,7 +83,8 @@ def bonusMockData(fba):
         mock_object = models.Bonus.objects.create(two_word_desc=f'TESTING RECORD {b}',
         bonus_digit=randrange(100000), bonus_desc=get_sentence(5),
         suplier=models.Suplier.objects.get(pk=randint(1, models.Suplier.objects.count())),
-        dep_bool=choice([True, False]), dep=randint(1, 5000), ttl=randint(1,30),
+        dep_bool=choice([True, False]), dep=randint(1, 5000), 
+        doe=timezone.now() + datetime.timedelta(days=30),
         wager=randint(1,70), bonus_type=choice((0,1)),
         )
         
