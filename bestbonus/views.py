@@ -1,5 +1,3 @@
-# from bestbonus import models
-# from casinos import models
 from django.shortcuts import render
 from django.db.models import Q
 from django.template.loader import render_to_string
@@ -23,9 +21,8 @@ def bonusRating(request):
         # 'nodep_count': len(sweet_bonuses),
     # }
     
-    
-
-    paginator = Paginator(bonuses, 3)
+    # Paginator paginates 6 bonuses. You may change the value
+    paginator = Paginator(bonuses, 6)
     page = request.GET.get('page', 1)
     
     

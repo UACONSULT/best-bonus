@@ -1,14 +1,38 @@
-# django db
-.DS_Store
-*.sqlite3
-media/
+# Byte-compiled / optimized / DLL files/ Python extensions
+__pycache__/
+*.py[cod]
+*$py.class
 *.pyc
-*.db
+*.pot
 *.pid
-# django migrations 
-**/migrations/**
-!**/migrations
-!**/migrations/__init__.py
+*.pyo
+*.mo
 
-# Cruft crap
+# C extensions
+*.so
+
+# Django stuff:
+local_settings.py
+
+*.log
+log/**
+!log/placeholder
+
+.coverage
+uwsgi.ini
+
+# DB
+.DS_Store
+*.db
+*.sqlite3
+# media/
+media/casino_logos/**
+media/bonus_images/**
+
 super_static_backup/
+
+# Migrations 
+migrations/
+# **/migrations/**
+# !**/migrations
+# !**/migrations/__init__.py

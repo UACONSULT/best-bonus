@@ -110,14 +110,14 @@ AUTH_PASSWORD_VALIDATORS = [
 # https://docs.djangoproject.com/en/2.2/topics/i18n/
 
 LANGUAGE_CODE = 'en-us'
-
 TIME_ZONE = 'UTC'
-
-USE_I18N = True
-
-USE_L10N = True
-
 USE_TZ = True
+
+
+# I should make these vars True a bit later
+USE_I18N = False
+USE_L10N = False
+
 
 
 # Static files (CSS, JavaScript, Images)
@@ -132,3 +132,11 @@ STATICFILES_DIRS = [
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+
+
+# Place for local settings 
+try:
+    from local_settings import *
+except ImportError:
+    pass
