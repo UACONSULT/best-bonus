@@ -9,25 +9,20 @@ SUPLIER_TYPES = (
     (1, 'Betting'),
     (2, 'CS:GO'),
     (3, 'Other'),
+
 )
 
 BONUS_TYPES = (
     (0, 'Deposit'),
     (1, 'Freespin'),
+
 )
-
-
-
-list1 = [124124,23124,324]
 
 
 class Suplier(models.Model):
     '''
-    Testing of doc string 
-
-    INPUT:
-
-    OUTPUT:
+    Suplier/Casino entity describes app/compnay/resource what distributes bonuses.
+    e.g. Online casino, Betting company, Gambling app, .......
     
     '''
 
@@ -40,10 +35,6 @@ class Suplier(models.Model):
         verbose_name="License Y/N")
     suplier_type = models.IntegerField(choices=SUPLIER_TYPES, default=0)
 
-
-
-
-
     def __str__(self):
         return self.title
 
@@ -55,6 +46,12 @@ class Suplier(models.Model):
 
 
 class Bonus(models.Model):
+    '''
+    Bonus entity bonus with some informative attributes for gambling dawgs
+    e.g. 100% No dep bonus for 365bet.......
+    
+    '''
+
     two_word_desc = models.CharField(max_length= 300, verbose_name="About the bonus in 2 words", blank=False)    
     
     bonus_digit = models.PositiveSmallIntegerField(verbose_name="Bonus value")
@@ -89,7 +86,7 @@ class Bonus(models.Model):
 
         return suplier_instance
 
-# Filters
+
 
 # Отрезок по размеру депозита. value1 - мин значение, value2 - макс значение
 def depositRange(value1, value2):
@@ -107,19 +104,6 @@ def bonusRange(value1, value2):
 
 
 
-
-
-# Все бездепозитные бонусы
-def nodepAll():
-    values = models.Bonus.filter(dep_bool = False)
-
-    return values
-
-
-# Только бонусы от лицензионных казино
-def onlyLicense():
-
-    return values
 
 # Sorting
 
@@ -165,12 +149,24 @@ FILTER_LIST = {
 #         if obj['name'] in FILTER_LIST.keys():
 
 
+#! Okay, we gotta refactor the function below(mainFilter way)
+#! mainFilterWay describes the proper way and order of executing filter functions  
+#!  describes the proper way and order of executing filter functions  
+#! mainFilterWay describes the proper way and order of executing filter functions  
 
+
+
+#!? Also you may think about release the filter and sorting using class
 # Takes deserialized JSON response array 
+#! Cover by tests(takes unproper object,)
 def filterObjReader(obj):
+    # Nested dict comprehension
+    #! Cover by tests(cannot parse the object)
     parsed_obj = { key:value for (key, value) in [o.values() for o in obj] }
 
     # Type cheking
+    #! Cover by tests(type is not in parsed_obj)
+    #! Delete cruft and not informative prints, comments, whitespaces
     if 'type' in parsed_obj and parsed_obj['type'] != 'all':
         print('NE RAVNO ALL I EST NAHUIII...................................\n\n\n')
         obj_type = parsed_obj['type']
@@ -178,7 +174,8 @@ def filterObjReader(obj):
     else:
         supliers_result = Suplier.objects.all()
     
-    # License checking 
+    # License checking
+    #!
     if 'license' in parsed_obj:
         supliers_result = supliers_result.filter(FILTER_LIST['license'])
 
@@ -192,7 +189,9 @@ def filterObjReader(obj):
 
 # /
 #   
-    #Transforming suplier data into bonus data    
+    #Transforming suplier data into bonus data
+    # ! Pretty strange way to merge 2 querysets. Look for a better way 
+    
     bonuses_result = Bonus.objects.none()
     for suplier in supliers_result:
         bonuses_result = bonuses_result | suplier.bonus_set.all()
@@ -212,7 +211,6 @@ def filterObjReader(obj):
 
     # Wager settings
 
-    
     bonuses_result = bonuses_result.filter( 
         Q(wager__range = parsed_obj['wager-js-range-slider'].split(';')) &\
         Q(dep__range = parsed_obj['deposit-js-range-slider'].split(';')) &\
@@ -253,7 +251,12 @@ def filterObjReader(obj):
 
 
 
+#! 
 
+def mainFilterWay():
+    
+
+    pass
 
 
 

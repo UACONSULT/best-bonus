@@ -29,9 +29,7 @@ def bonusRating(request):
 
     if request.is_ajax():
         
-        
         data = {}
-
         if int(page) >= paginator.num_pages:
             data['paginator_hiding'] = True
         
@@ -47,8 +45,6 @@ def bonusRating(request):
             template_name="cardblock.html", 
             context={"bonuses": paginated_bonuses, 'bonuses_count': paginated_bonuses.count}
         )
-
-
 
         return JsonResponse(data=data)
     
