@@ -36,6 +36,13 @@ class Suplier(models.Model):
         return self.title
 
 
+
+
+# Created for DOE field default in Bonus model 
+# Yeah, i know it might not be quite pythonic decision, but Django does not serialize lambda functions
+def today_plus_30_days():
+    return datetime.date.today() + datetime.timedelta(days=30) 
+
 '''
 Bonus entity bonus with some informative attributes for gambling dawgs
 e.g. 100% No dep bonus for 365bet.......
@@ -51,14 +58,14 @@ class Bonus(models.Model):
     suplier = models.ForeignKey(Suplier, on_delete=models.CASCADE)
     image = models.ImageField(upload_to='bonus_images/', blank=True, null=True, verbose_name='Bonus image')
 
-# Депозитный или бездепозитный бонус
+# Deposit or non-dep 
     dep_bool = models.BooleanField(default=True, blank=False)
     dep = models.PositiveSmallIntegerField(blank = False)
 
 # Date of adding
-    doa = models.DateField(default=datetime.date.today)
+    doa = models.DateField(default=datetime.date.today, verbose_name="Date of adding")
 # Date of expiring    
-    doe = models.DateField(blank=True, null=True, verbose_name="Date of expiring")
+    doe = models.DateField(default=today_plus_30_days, verbose_name="Date of expiring")
 
     wager = models.SmallIntegerField(default=0, blank=True, \
         validators=[MaxValueValidator(100)], verbose_name='Bonus wager')
@@ -70,14 +77,18 @@ class Bonus(models.Model):
 # Returns datetime.date
     def ttl_full(self):
         try:
+            # If Date of expiring for some reasons is earlier than date of adding =
+            #   - it equals DOE value to DOA value. So ttl is 0, but it will bypass a bunch of issues
             if self.doe < self.doa:
-                print('....Bonus expired!')
-                return None
+                self.doe = self.doa
+                self.save()
+            # Way to retrive 'time to live'
             ttl_obj = self.doe - self.doa
             return ttl_obj
+        # If something got wrong it will return 0 
         except:
             print('....Some exception raised!!!')
-            return None
+            return 0
 
 # Method retuns time-to-live bonus value in days
 # Calls ttl_full methond(because it checks DOE and DOA distinction)
@@ -91,19 +102,16 @@ class Bonus(models.Model):
         return date_object.days * 24
 
 
-# Returns other bonuses of instance casino
+# Returns related bonuses to our casino instance
     def otherBonuses(self):
-        suplier_instance = self.suplier.bonus_set.all()
-        return suplier_instance
+        return self.suplier.bonus_set.all()
+
 
     class Meta:
         ordering = ['-bonus_digit']
 
     def __str__(self):
-        return f'{self.suplier.title}:{self.two_word_desc}'
-
-
-
+        return f'{self.suplier.title} : {self.two_word_desc}'
 
 
 
