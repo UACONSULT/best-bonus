@@ -133,7 +133,6 @@ class BonusModelTests(TestCase):
         self.assertEqual(mock_bonus.ttl_days(), 0) 
 
 
-#! Write docs and comment
     def test_ttl_hours(self):
         """
         test_ttl_hours() checks if DOE posted 100 days later DOA. But returns integer of hours.
@@ -146,10 +145,9 @@ class BonusModelTests(TestCase):
         mock_bonus.doe = (timezone.now() + datetime.timedelta(days=2)).date()
         
         # 48 Hours = 2 days
-        self.assertEqual(mock_bonus.ttl_hours(), 48) 
+        self.assertEqual(mock_bonus.ttl_hours(), 48)
 
 
-#! Write docs and comment   
     def test_ttl_hours_past_doe(self):
         """
         test_ttl_hours_past_doe() checks if expiring date(doe) posted earlier adding date(doa).
@@ -168,7 +166,44 @@ class BonusModelTests(TestCase):
 
 # Tests Filter mechansism
 class FilterTests(TestCase):
-    pass
+    def setUp(self):
+        pass
+        # Mock JSON array we get from AJAX
+
+
+#! Create comment desc and comment vars
+    def test_parsingObject_proper_data(self):
+        # Test JSON object parsing. It should return comprenshed data for 
+        unparsed_JSON_array = [
+            {'name': 'sorting', 'value': 'dep_min_to_max'}, 
+            {'name': 'type', 'value': 'all'}, 
+            {'name': 'wager-js-range-slider', 'value': '0;42'}, 
+            {'name': 'bonus-js-range-slider', 'value': '0;5000'}, 
+            {'name': 'deposit-js-range-slider', 'value': '0;10000'}
+            ]
+
+
+        parsed_JSON = {
+            'sorting': 'dep_min_to_max',
+            'type': 'all',
+            'wager-js-range-slider': '0;42',
+            'bonus-js-range-slider': '0;5000',
+            'deposit-js-range-slider': '0;10000'}
+
+        parsed_JSON_obj = models.parsingObject(unparsed_JSON_array)
+        
+        print(parsed_JSON_obj)
+        self.assertEqual(parsed_JSON_obj, parsed_JSON)
+        
+    # def test_AJAX_works(self):
+    #     response = self.client.post('/add-item-to-collection')
+    #     self.assertEqual(response.status_code, 200)
+    
+    def sortingAll(self):
+        pass
+        # for param in FILTERLIST['sorting'].keys()) 
+            # bonuses_result.order_by(FILTER_LIST[])
+            # self.assertEqual(b)
 
 
 

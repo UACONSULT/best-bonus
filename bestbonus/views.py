@@ -88,7 +88,11 @@ def ajaxSearch(request):
         #         template_name="cardblock.html", 
         #         context={"bonuses": bonuses})
             
-            bonuses = models.filterObjReader(form_data)
+            # bonuses = models.filterObjReader(form_data)
+            
+            # Testing new filter mechanism
+            bonuses = models.mainFilterWay(form_data)
+
             # bonuses = json.dumps(bonuses)
  
             data['html_from_view'] = render_to_string(
@@ -108,4 +112,4 @@ def ajaxSearch(request):
 
         return JsonResponse(data=data)
 
-   
+
