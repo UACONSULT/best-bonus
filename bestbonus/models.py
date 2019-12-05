@@ -31,11 +31,8 @@ class Suplier(models.Model):
     ca_license_bool = models.BooleanField(default=False, verbose_name="License")
     suplier_type = models.IntegerField(choices=SUPLIER_TYPES, default=0)
 
-
     def __str__(self):
         return self.title
-
-
 
 
 # Created for DOE field default in Bonus model 
@@ -114,63 +111,8 @@ class Bonus(models.Model):
         return f'{self.suplier.title} : {self.two_word_desc}'
 
 
-#! DO NOT TOUCH THE CODE ABOVE. IT IS OKAY. COVERED BY TESTS, COMMENTS, DOCS
 
-
-
-# Mapping filters and fitler functions or Q objects
-#! Think about moving that var into Parent Class?? Will it prevent testing capability
-#! Move FILTER_LIST to FilterMechanism Class. Check out everything works well
-FILTER_LIST = {
-    'sorting': {
-        'bon_max_to_min': 'dep',
-        'bon_min_to_max': '-dep',
-        'dep_min_to_max': 'bonus_digit',
-        'dep_max_to_min': '-bonus_digit',
-        'doa_old_to_new': 'doa',
-        'doa_new_to_old': '-doa',
-        'wager_min_to_max': 'wager',
-        'wager_max_to_min': '-wager',
-        'ttl_min_to_max': 'ttl',
-        'ttl_max_to_min': '-ttl',
-
-
-    },
-    'type': {
-        'casino': Q(suplier_type=0),
-        'betting': Q(suplier_type=1),
-    },
-
-
-
-    'license': Q(ca_license_bool=True),
-        # 'safe': ,
-    # 'fresh':,
-    'nodep': Q(dep_bool=False),  
-        # 'season': Q( =True),
-    # 'season': Q(),
-    # 'wager-js-range-slider': Q(wager__range=(start_date, end_date)),
-    # 'deposit-js-range-slider': Q(wager__range=(start_date, end_date)),
-    # 'bonus-js-range-slider': Q(wager__range=(start_date, end_date)),
-}
-
-
-
-
-# Argument 'filter_array' is filter form list data rendered by main.js
-# def ajaxFitlerLoader(filter_array):
-#     for obj in filter_array:
-#         if obj['name'] in FILTER_LIST.keys():
-
-
-#! Okay, we gotta refactor the function below(mainFilter way)
-#! mainFilterWay describes the proper way and order of executing filter functions  
-#!  describes the proper way and order of executing filter functions  
-#! mainFilterWay describes the proper way and order of executing filter functions  
-
-
-# Takes deserialized JSON response array and returns a parsed dict for FilterMechanism
-# 
+# Takes deserialized JSON response array and returns a parsed dict for FilterMechanism 
 # e.g of parsingObject in action
 """
 .................parsingObject: UNPARSED(list)
@@ -186,249 +128,145 @@ FILTER_LIST = {
  'bonus-js-range-slider': '0;5000', 'deposit-js-range-slider': '0;10000'}
 
 """
-
+# Argument 'unparsed_obj' is JSON array rendered by main.js
 def parsingObject(unparsed_obj):
-    #! Cover by tests(cannot parse the object)
     # Nested dict comprehension
-
-    # print('\n\n.................parsingObject: unparsed')
-    # print(unparsed_obj)
-    # print(type(unparsed_obj))
     parsed_obj = { key:value for (key, value) in [o.values() for o in unparsed_obj] }
-    # print('\n\n.................parsingObject: parsed object')
-    # print(parsed_obj)
-    # print(type(parsed_obj))
-    # print('\n\n\n\n\n')
 
     return parsed_obj
 
 
-#!? Also you may think about release the filter and sorting using class
-#! Cover by tests(takes unproper object,)
-def filterObjReader(obj):
-    parsed_obj = parsingObject(obj)
-    # Type cheking
-    #! Cover by tests(type is not in parsed_obj)
-    #! Delete cruft and not informative prints, comments, whitespaces
-    if 'type' in parsed_obj and parsed_obj['type'] != 'all':
-        print('NE RAVNO ALL I EST NAHUIII...................................\n\n\n')
-        obj_type = parsed_obj['type']
-        supliers_result = Suplier.objects.filter(FILTER_LIST['type'][obj_type])
-    else:
-        supliers_result = Suplier.objects.all()
-    
-    # License checking
-    #!
-    if 'license' in parsed_obj:
-        supliers_result = supliers_result.filter(FILTER_LIST['license'])
+# This function is an interface between views and FilterMechanism(models)
+# Takes as an argument unparsed_json. Unparsed JSON - JSON Array with filter params we gotta apply
+#       and fetch proper Bonus QuerySet by these filter params 
+# Returns Bonus QuerySet    
+def mainFilterWay(unparsed_json):
+    # Input data should be parsed(by parsingObject function, see above) JSON object
+    # {'sorting': 'dep_min_to_max', 'type': 'all', 'wager-js-range-slider': '0;42',
+    #  'bonus-js-range-slider': '0;5000', 'deposit-js-range-slider': '0;10000'}
 
-#
-# /CREATE HERE ANY FILTERS FOR SUPLIER MODEL
+    # Parsing unparsed_json. Contains readable for FilterMechanism Class filter values  
+    obj = parsingObject(unparsed_json) 
 
-
-
-
-
-
-# /
-#   
-    #Transforming suplier data into bonus data
-    # ! Pretty strange way to merge 2 querysets. Look for a better way 
-    
-    bonuses_result = Bonus.objects.none()
-    for suplier in supliers_result:
-        bonuses_result = bonuses_result | suplier.bonus_set.all()
-
-
-    # bonuses_result = list(set(bonuses_result))
-
-    # Nodep checking 
-    if 'nodep' in parsed_obj:
-        bonuses_result = bonuses_result.filter(FILTER_LIST['nodep'])
-    
-    # if 'season' in parsed_obj:
-    #     bonuses_result = bonuses_result.filter(FILTER_LIST['season'])
-    # if 'fresh' in parsed_obj:
-    #     bonuses_result = bonuses_result.filter(FILTER_LIST['season'])
-
-
-    # Wager settings
-
-    bonuses_result = bonuses_result.filter( 
-        Q(wager__range = parsed_obj['wager-js-range-slider'].split(';')) &\
-        Q(dep__range = parsed_obj['deposit-js-range-slider'].split(';')) &\
-        Q(bonus_digit__range = parsed_obj['bonus-js-range-slider'].split(';')) \
-        )
-
-
-    # 'wager-js-range-slider': Q(wager__range=(start_date, end_date)),
-    # 'deposit-js-range-slider': Q(wager__range=(start_date, end_date)),
-    # 'bonus-js-range-slider': Q(wager__range=(start_date, end_date)),
-
-
-
-# /CREATE HERE ANY FILTERS FOR BONUS MODEL
-
-
-
-
-
-
-#
-#   
-
-    # SORTING
-    # Regardless "sorting" attribute is first in FILTER_LIST. 
-    # It gotta be occured after all filters in the order.
-    bonuses_result = bonuses_result.order_by(FILTER_LIST['sorting'][parsed_obj['sorting']])
-
-
-
-    print('BONUSES RESULT ::::::...................................\n\n\n')
-    print(bonuses_result)
-    print(parsed_obj)
-    print('...................................\n\n\n')
-
-
-    return bonuses_result
-
-
-
-
-
-
-
-
-
-
-
-#! Finish Writing ROADMAP FOR THAT CRAP
-# FILTER ROADMAP:
-# First we gotta filter is type. We fetch type results first and then work with results
-# Second is checkboxes 
-#
-# TYPE -> SUPLIER CHECKBOXES -> COVERSION -> BONUS CHECKBOXES -> SORTING ----> Result Bonus Queryset 
-#
-#! Pay attention we work with Suplier Queryset before conversion. And after conversion we work \
-#!      with Bonus Result QuerySet 
-
-# Input data should be parsed(by parsingObject function, see above) JSON object
-# {'sorting': 'dep_min_to_max', 'type': 'all', 'wager-js-range-slider': '0;42',
-#  'bonus-js-range-slider': '0;5000', 'deposit-js-range-slider': '0;10000'}
-
-
-
-
-
-
-#! What this function for???? Input???? Outyput???
-def mainFilterWay(parsed_json):
-    # The function constructs filter roadmap
-    obj = parsingObject(parsed_json) 
-    # result_query = FilterMechanism(obj)
-    print('...............................mainFilterWay. Testing parsing obj')
-    print(obj)
-    
+    # Returns Bonus QuerySet by taken filter values from parsed JSON/    
     result_query = FilterBox(obj).render()
-    # result_query = result_query
-    # You can add new filter order here
-    # print(str(result_query))
-
-    #! fetchType always should be first!!!!
-    
-    # print(result_query)
     
     return result_query
 
 
 
-#! What this class for??? Input??? Output????
-class FilterMechanism:
-    """
-    
-    """
-    # FILTER_LIST = 
+# This class is abstract class. It provides us flexible filter capabilities
+# Class provides us completed methods for filtering and sorting.
 
+# All you need to attach this to your filter: 
+# 1) Create Child-Class(it should ingerites FilterMechanism Class) for your Filter
+# 2) Write in Child CLass your own render method with Parent Class methods for your purposes
+
+# Parent Class returns nothing it just provides methods for filtering and sorting and environment for 
+#   sharing result QuerySet(Bonus/Suplier)
+# ! BE CAREFULL: 
+# ! PAY ATTENTION TO QUERYSET MODEL YOU ARE WORKING WITH. There BONUS QuerySet and Suplier QuerySet.
+# !     Do not mix it. To conversion there is provided 'suplier_to_bonus_converting' method
+class FilterMechanism:
+
+    # Mapping filters and fitler data or Q objects
+    # ? If you wanna add new filter/sorting. ADD HERE.
+
+    FILTER_LIST = {
+        'sorting': {
+            'bon_max_to_min': 'dep',
+            'bon_min_to_max': '-dep',
+            'dep_min_to_max': 'bonus_digit',
+            'dep_max_to_min': '-bonus_digit',
+            'doa_old_to_new': 'doa',
+            'doa_new_to_old': '-doa',
+            'wager_min_to_max': 'wager',
+            'wager_max_to_min': '-wager',
+            # 'ttl_min_to_max': 'ttl',
+            # 'ttl_max_to_min': '-ttl',
+        },
+
+        'type': {
+            'casino': Q(suplier_type=0),
+            'betting': Q(suplier_type=1),
+        },
+
+
+        # ?Suplier checkboxes
+        'license': Q(ca_license_bool=True),
+        # 'safe': ,
+        # 'fresh':,
+
+        # ?Bonus checkboxes
+        'nodep': Q(dep_bool=False),  
+        # 'season': Q(),
+        
+    }
+    
     def __init__(self, parsed_JSON):
         self.parsed_JSON = parsed_JSON
         self.bonuses_result = []
-        # self.resultQuery = []
 
+# ?VITAL method. Creates first instance of result QuerySet(Suplier)
+# Fetches Suplier instances by certain type.
+# e.g. Casino/Betting/All. Fetches all Casino Suplier instances(all casinos in current DB)
     def fetchType(self):
+
         # Type cheking
-        #! Cover by tests(type is not in parsed_obj). Delete cruft, comments, whitespaces
-
+        # Creates self.resultQuery. Result QuerySet with Supliers taken by filter 'type' 
         if 'type' in self.parsed_JSON and self.parsed_JSON['type'] != 'all':
-            print('NE RAVNO ALL I EST NAHUIII...................................\n\n\n')
-            print('.................IF block happens')
-
             _ = self.parsed_JSON['type']
-            self.resultQuery = Suplier.objects.filter(FILTER_LIST['type'][_])
+            self.resultQuery = Suplier.objects.filter(FilterMechanism.FILTER_LIST['type'][_])
         else:
-            print('.................Else block happens')
+            # Happens if 'type' is 'all' or something got wrong
             self.resultQuery = Suplier.objects.all()
-        
-        print(self.resultQuery)
-        print(type(self.resultQuery))
 
+        # It also cant return result Suplier QuerySet 
         return self.resultQuery
 
-#! Comment desc inside
-    # Calls before conversion
+# Apply checkboxes for Suplier model
     def checkboxSuplierFilter(self):
-        """
-        
-        """
-
+        # ? Vital note. The method gotta be called before conversion 
 
         # License checking
         if 'license' in self.parsed_JSON:
-            self.resultQuery = self.resultQuery.filter(FILTER_LIST['license'])
+            self.resultQuery = self.resultQuery.filter(FilterMechanism.FILTER_LIST['license'])
         # CREATE HERE ANY FILTERS FOR SUPLIER MODEL
-        
 
+        #        
 
-        #
-#! Comment desc inside
-    # Calls after conversion
+# Apply checkboxes for Bonus model
     def checkboxBonusFilter(self):
-        """
-        
-        """
-        
+        # ? Vital note. The method gotta be called after conversion 
         
         # Nodep checking 
         if 'nodep' in self.parsed_JSON:
-            self.bonuses_result = self.bonuses_result.filter(FILTER_LIST['nodep'])
-
+            self.bonuses_result = self.bonuses_result.filter(FilterMechanism.FILTER_LIST['nodep'])
         # CREATE HERE ANY FILTERS FOR BONUS MODEL
         
-
         #
 
-
+# Apply range slider filters for result Bonus QuerySet 
     def wagerFilter(self):
-        # Wager settings
-
+        # Range sliders
         self.bonuses_result = self.bonuses_result.filter( 
             Q(wager__range = self.parsed_JSON['wager-js-range-slider'].split(';')) &\
             Q(dep__range = self.parsed_JSON['deposit-js-range-slider'].split(';')) &\
             Q(bonus_digit__range = self.parsed_JSON['bonus-js-range-slider'].split(';')) \
-            # If you wanna add a new wager, just add below
+            # If you wanna add a new range-slider, just add below
 
             )
 
+# Sorting
     def sorting(self):
-        # Sorting
         # It gotta be occured after all filters in the order.
-        self.bonuses_result = self.bonuses_result.order_by(FILTER_LIST['sorting'][self.parsed_JSON['sorting']])
+        self.bonuses_result = self.bonuses_result.order_by(FilterMechanism.FILTER_LIST['sorting'][self.parsed_JSON['sorting']])
         
 
+# Converts Suplier result queryset to Bonus result query set
+# It is a vital method, cause we should return to django templates Bonus queryset
     def _suplier_to_bonus_converting(self):
-        # Converts Suplier result queryset to Bonus result query set
-        # It is a vital method, cause we should return to django templates Bonus queryset
         #! Just do not touch this method
-
         #? Pretty weird way to merge 2 querysets. Look for a better decision 
         self.bonuses_result = Bonus.objects.none()
         
@@ -439,30 +277,50 @@ class FilterMechanism:
 
 # Method for query by name fetching
 # e.g. SearchBox 
-    def searchFilter(self, query):
-        # 
-        pass
-
-#! I forgot what this method for. So delete it if you want :)
-    def typeObject(self, query):
+    def searchFilter(self, query): 
         pass
 
     def __str__(self):
         return self.resultQuery
     
+# FILTERING ROADMAP:
+#
+# 1) We gotta filter by selected Suplier type(Casino/Betting/All...)
+# We fetch type results first and then work with results
+# 2) Check and apply Suplier checkboxes
+# 
+# ?4) Converting Suplier result Query Set into Bonus result Query Set
+# ? Pay attention we work with Suplier Queryset before conversion. 
+# And after conversion we work with Bonus Result QuerySet 
+#
+# 5) Check and apply Bonus checkboxes
+# 6) Aplly Range sliders params(wager, bonus, deposit.....)
+# 
+# 7) Sorting Bonus Query Set result 
+#
+# SCHEME OF FILTERING(this is how FilterBox render method works) 
+#   TYPE -> SUPLIER CHECKBOXES -> COVERSION -> BONUS CHECKBOXES -> RANGE SLIDERS\
+#               -> SORTING ----> Result Bonus Queryset 
+#
 
-#! What this class for. Create desc. Input? Output?
+# Class creates filter construction with applying in certain order.
+# FilterBox class is a child class of FilterMechanism
+# ! One filter - one instance
+# # e.g. FilterBox instance that constructs SearchBox\FilterBox\..
+# ......whatever what has to search\fetch\find\sort smt 
 class FilterBox(FilterMechanism):
     def __init__(self, parsed_JSON):
         self.parsed_JSON = parsed_JSON
         # invokes FilterMechanism.__init__
         super().__init__(parsed_JSON)
         
-#! What this method for????
+# ?Vital method. The method creates filter construction and defines order of applying
+# You can see example of using this class and method above
+# Remember. Order - is super important here.
     def render(self):
         # Type filter
         # It always gotta be first in the order.
-        # It creates flow object
+        # It creates flow object(resultQuery/bonusQuery....the var contains our result QuerySet)
         self.suplier_query = self.fetchType()
         self.checkboxSuplierFilter()
         # Add code below if you wanna add smt for Suplier model
@@ -473,27 +331,22 @@ class FilterBox(FilterMechanism):
         
         self.checkboxBonusFilter()
         # Add code below if you wanna add smt for Bonus model
-        
-        # Wager filter
+
+
+        # Silder-range filters
         self.wagerFilter()
-        # Sorting. Sorting always occurs last in order
+        
+        # Sorting. Sorting uses always last in the order
         self.sorting()
 
 
         # Returns Bonus Query Set
+        # It takes self.bonus_result(aka flow object) from Class attributes. When any method calls, it rewrites flow object
         return self.bonuses_result
-
-
 
     def __str__(self):
         return self.bonuses_result
 
-
-
+# Class for searching
 class SearchBox(FilterMechanism):
     pass
-
-
-
-
-
