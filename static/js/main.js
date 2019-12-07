@@ -1,6 +1,5 @@
+'use strict'
 console.log('Main JS is connected successfully');
-
-
 
 // Elements
 const search_input = $("#search-field-text");

@@ -54,7 +54,6 @@ import sys
 import datetime
 from loremipsum import get_sentence
 from random import randrange, randint, choice
-
 from django.utils import timezone
 
 from bestbonus import models

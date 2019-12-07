@@ -110,6 +110,19 @@ class Bonus(models.Model):
     def __str__(self):
         return f'{self.suplier.title} : {self.two_word_desc}'
 
+#? Functions used in tests, scripts help to find min/max values for range sliders
+# Wager max value
+def wagerMax():
+    pass
+
+# Deposit max value
+def depMax():
+    pass
+
+# Bonus max value
+def bonusMax():
+    pass
+
 
 
 # Takes deserialized JSON response array and returns a parsed dict for FilterMechanism 
@@ -205,7 +218,6 @@ class FilterMechanism:
     
     def __init__(self, parsed_JSON):
         self.parsed_JSON = parsed_JSON
-        self.bonuses_result = []
 
 # ?VITAL method. Creates first instance of result QuerySet(Suplier)
 # Fetches Suplier instances by certain type.

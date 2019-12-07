@@ -1,3 +1,5 @@
+import json
+
 from django.shortcuts import render
 from django.db.models import Q
 from django.template.loader import render_to_string
@@ -5,7 +7,6 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.http import JsonResponse
 
 from bestbonus import models
-import json
 
 
 def bonusRating(request):
@@ -102,14 +103,16 @@ def ajaxSearch(request):
             return JsonResponse(data=data)
 
 
-
+#? Rewrite bonus fetching using Q
+#? Add to filter function Q objects 
+#?       with(two_word_desc,bonus_desc,bonus_digit,dep??? AND suplier_title)
         bonuses = models.Bonus.objects.filter(two_word_desc__icontains=url_param)
- 
+#
+
         data['html_from_view'] = render_to_string(
             template_name="cardblock.html", 
             context={"bonuses": bonuses, 'bonuses_count': bonuses.count}
         )
-
         return JsonResponse(data=data)
 
 

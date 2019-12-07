@@ -1,14 +1,16 @@
 import os
 import datetime
 from loremipsum import get_sentence
+from random import randrange, randint, choice
+
 
 from django.test import TestCase
 from django.utils import timezone
 from django.urls import reverse
 from django.db import IntegrityError 
 
-from bestbonus import models
 from bestbonus.settings import BASE_DIR
+from bestbonus import models
 
 
 
@@ -167,13 +169,36 @@ class BonusModelTests(TestCase):
 # Tests Filter mechansism
 class FilterTests(TestCase):
     def setUp(self):
-        pass
-        # Mock JSON array we get from AJAX
+        # ?Change only var values below
+        
+        # Amount of supliers you wanna create
+        suplier_amount = 5
+        
+        # Amount of bonuses you wanna create
+        bonus_amount = 20
+        
+        # Suplier creating block
+        for suplier in range(suplier_amount):
+            models.Suplier.objects.create(title=f'TESTING CASINO {suplier}',
+                ca_license_bool=choice([True, False]), suplier_type=randint(0,3),
+            )
+
+        # Bonus creating block
+        for bonus in range(bonus_amount):
+            models.Bonus.objects.create(two_word_desc=f'TESTING BONUS {bonus}',
+                bonus_digit=randrange(5000), bonus_desc=get_sentence(5),
+                suplier=models.Suplier.objects.get(pk=randint(1, suplier_amount)),
+                dep_bool=choice([True, False]), dep=randint(1, 10000), 
+                doe=timezone.now() + datetime.timedelta(days=randint(1, 200)),
+                wager=randint(1,50), bonus_type=choice((0,1)),
+            )
 
 
-#! Create comment desc and comment vars
     def test_parsingObject_proper_data(self):
-        # Test JSON object parsing. It should return comprenshed data for 
+        # Tests JSON object parsing function
+        # Till we filter JSON object to find certain bonuses we need to parse JSON first
+        
+        # Mock JSON array we get from AJAX
         unparsed_JSON_array = [
             {'name': 'sorting', 'value': 'dep_min_to_max'}, 
             {'name': 'type', 'value': 'all'}, 
@@ -182,7 +207,7 @@ class FilterTests(TestCase):
             {'name': 'deposit-js-range-slider', 'value': '0;10000'}
             ]
 
-
+        # How parsed JSON object have to look like
         parsed_JSON = {
             'sorting': 'dep_min_to_max',
             'type': 'all',
@@ -190,22 +215,45 @@ class FilterTests(TestCase):
             'bonus-js-range-slider': '0;5000',
             'deposit-js-range-slider': '0;10000'}
 
-        parsed_JSON_obj = models.parsingObject(unparsed_JSON_array)
-        
-        print(parsed_JSON_obj)
+        # Call parsing function
+        parsed_JSON_obj = models.parsingObject(unparsed_JSON_array)        
         self.assertEqual(parsed_JSON_obj, parsed_JSON)
-        
+    
+
+    def test_mainFilterWay(self):
+        # Tests mainFilterWay function. The funciton wraps the parsing and FilterMechanism result rendering
+        # Function returns result Bonus QuerySet we put into our tempaltes
+        #? IT IS OKAY WHEN THIS TEST FAILURES. TEST SHOULD SHOW THAT FILTERING WORKS 
+
+        # Mock JSON array we get from AJAX
+        unparsed_JSON_array = [
+            {'name': 'sorting', 'value': 'dep_min_to_max'}, 
+            {'name': 'type', 'value': 'all'}, 
+            {'name': 'wager-js-range-slider', 'value': '0;42'}, 
+            {'name': 'bonus-js-range-slider', 'value': '0;5000'}, 
+            {'name': 'deposit-js-range-slider', 'value': '0;10000'}
+        ]
+
+        bonuses_result = models.mainFilterWay(unparsed_JSON_array)
+
+        self.assertEqual(len(bonuses_result), len(models.Bonus.objects.all()))
+
+
+
     # def test_AJAX_works(self):
     #     response = self.client.post('/add-item-to-collection')
     #     self.assertEqual(response.status_code, 200)
     
     def sortingAll(self):
         pass
-        # for param in FILTERLIST['sorting'].keys()) 
+        # for param in FILTERLIST['sorting'].keys())
             # bonuses_result.order_by(FILTER_LIST[])
             # self.assertEqual(b)
 
-
+    
+    
+    
+    
 
 
 
