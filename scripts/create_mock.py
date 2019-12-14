@@ -80,11 +80,11 @@ def bonusMockData(fba):
 
         # Creates bonus filling it with random generated data in some fields 
         mock_object = models.Bonus.objects.create(two_word_desc=f'TESTING RECORD {b}',
-        bonus_digit=randrange(100000), bonus_desc=get_sentence(5),
+        bonus_digit=randrange(4000), bonus_desc=get_sentence(5),
         suplier=models.Suplier.objects.get(pk=randint(1, models.Suplier.objects.count())),
-        dep_bool=choice([True, False]), dep=randint(1, 5000), 
+        dep_bool=choice([True, False]), dep=randint(1, 10000), 
         doe=timezone.now() + datetime.timedelta(days=30),
-        wager=randint(1,70), bonus_type=choice((0,1)),
+        wager=randint(1,100), bonus_type=choice((0,1)),
         )
         
         print(mock_object)

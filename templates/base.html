@@ -155,24 +155,24 @@
             <li>
                 <div class="custom-control custom-checkbox mb-3">
                     <input type="checkbox" class="custom-control-input" id="customCheck1" name="nodep">
-                    <label class="custom-control-label" for="customCheck1">Бездепозитные<span>(284)</span></label>
+                    <label class="custom-control-label" for="customCheck1">Бездепозитные<span>({{ filter_box_meta.nodep_count }})</span></label>
 
                 </div>
                 <div class="custom-control custom-checkbox mb-3">
                     <input type="checkbox" class="custom-control-input" id="customCheck2" name="license">
-                    <label class="custom-control-label" for="customCheck2">Лицензионные<span>(284)</span></label>
+                    <label class="custom-control-label" for="customCheck2">Лицензионные<span>({{ filter_box_meta.license_count }})</span></label>
                 </div>
                 <div class="custom-control custom-checkbox mb-3">
                         <input type="checkbox" class="custom-control-input" id="customCheck3" name="safe">
-                        <label class="custom-control-label" for="customCheck3">Надежные компании<span>(32)</span></label>
+                        <label class="custom-control-label" for="customCheck3">Надежные компании<span>({{ filter_box_meta.safe_count }})</span></label>
                 </div>
                 <div class="custom-control custom-checkbox mb-3">
                         <input type="checkbox" class="custom-control-input" id="customCheck4" name="fresh">
-                        <label class="custom-control-label" for="customCheck4">Свежые<span>(21)</span></label>
+                        <label class="custom-control-label" for="customCheck4">Свежые<span>({{ filter_box_meta.safe_count }})</span></label>
                 </div>
                 <div class="custom-control custom-checkbox mb-3">
                         <input type="checkbox" class="custom-control-input" id="customCheck5" name="season">
-                        <label class="custom-control-label" for="customCheck5">Сезонные<span>(21)</span></label>
+                        <label class="custom-control-label" for="customCheck5">Сезонные<span>({{ filter_box_meta.season_count }})</span></label>
                 </div>
                 
                 
@@ -184,10 +184,9 @@
             <!-- Все/Казино(563)/БК(435)/Кейсы(201) -->
             <li>
                 <select name='type' id='type_select' class="custom-select custom-select-sm mb-3">
-                    <option value="all" selected>Все<span>(562)</span></option>
-                    <option value="casino">Казино<span>(231)</span></option>
-                    <option value="betting">БК<span>(54)</span></option>
-                    <!-- <option value="audi">Audi</option> -->
+                    <option value="all" selected>Все<span>({{ filter_box_meta.all }})</span></option>
+                    <option value="casino">Казино<span>({{ filter_box_meta.casino }})</span></option>
+                    <option value="betting">БК<span>({{ filter_box_meta.betting }})</span></option>
                 </select>
             </li><hr>
 
@@ -197,11 +196,11 @@
             <li class='custom-range-input-outer'>
                     <p class='text-center'>Вагер</p>
     
-                    <input id='wager-js-range-slider' type="text" class="js-range-slider" name="wager-js-range-slider" value="" />
+                    <input id='wager-js-range-slider' data-to={{ filter_box_meta.wager_range_max }} data-max={{ filter_box_meta.wager_range_max }} type="text" class="js-range-slider" name="wager-js-range-slider" value="" />
     
                         <div class='custom-range-input-block'>
                             <input id='wager_range_input_from' type="text" class="form-control" placeholder="0">
-                            <input id='wager_range_input_to' type="text" class="form-control" placeholder="100x">
+                            <input id='wager_range_input_to' type="text" class="form-control" placeholder="{{ filter_box_meta.wager_range_max }}x">
                         </div>
                 </li><hr>
 
@@ -210,11 +209,11 @@
             <li class='custom-range-input-outer'>
                     <p class='text-center'>Размер бонуса</p>
     
-                    <input id='bonus-js-range-slider' type="text" class="js-range-slider" name="bonus-js-range-slider" value="" />    
+                    <input id='bonus-js-range-slider' data-to={{ filter_box_meta.bonus_range_max }} data-max={{ filter_box_meta.bonus_range_max }} type="text" class="js-range-slider" name="bonus-js-range-slider" value="" />    
     
                         <div class='custom-range-input-block'>
                             <input id='bonus_range_input_from' type="text" class="form-control" placeholder="От 0">
-                            <input id='bonus_range_input_to' type="text" class="form-control" placeholder="До 5000$">
+                            <input id='bonus_range_input_to' type="text" class="form-control" placeholder="До {{ filter_box_meta.bonus_range_max }}$">
                         </div>
                 </li><hr>            
 
@@ -227,10 +226,10 @@
             <li class='custom-range-input-outer'>
                 <p class='text-center'>Размер депозита</p>
 
-                <input id='deposit-js-range-slider' type="text" class="js-range-slider" name="deposit-js-range-slider" value="" />
+                <input id='deposit-js-range-slider' data-to={{ filter_box_meta.dep_range_max }} data-max={{ filter_box_meta.dep_range_max }} type="text" class="js-range-slider" name="deposit-js-range-slider" value="" />
                     <div class='custom-range-input-block'>
                         <input id='deposit_range_input_from' type="text" class="form-control" placeholder="От 0">
-                        <input id='deposit_range_input_to' type="text" class="form-control" placeholder="До 10 000$">
+                        <input id='deposit_range_input_to' type="text" class="form-control" placeholder="До {{ filter_box_meta.dep_range_max }}$">
                     </div>
             </li><hr>
             
@@ -264,8 +263,8 @@
         <hr>
         {# Card content block #}
         <div id="replaceable-cardblock">
-            {% include 'cardblock.html' with bonuses=bonuses bonuses_count=bonuses_count %}
-            {% include 'cardblock.html' with bonuses=sweet_bonuses bonuses_count=sweet_bonuses_count %}
+            {% include 'cardblock.html' with bonuses=bonuses bonuses_meta=bonuses_meta %}
+            {% include 'cardblock.html' with bonuses=sweet_bonuses bonuses_meta=sweet_bonuses_meta %}
 
         </div>
 

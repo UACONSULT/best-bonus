@@ -107,12 +107,12 @@ deposit_slider_jqobj.ionRangeSlider({
     
     // Pass in vars below data from a server
     min: 0,
-    max: 10000,
+    // max: 10000,
     // 
     
     // Pass into vars velow data from inputs
     from: 0,
-    to: 10000,
+    // to: 10000,
 
 
 
@@ -131,9 +131,9 @@ bonus_slider_jqobj.ionRangeSlider({
     skin: "flat",
     type: "double",
     min: 0,
-    max: 5000,
+    // max: 5000,
     from: 0,
-    to: 5000,
+    // to: 5000,
 });
 
 
@@ -141,9 +141,9 @@ wager_slider_jqobj.ionRangeSlider({
     skin: "flat",
     type: "double",
     min: 0,
-    max: 50,
+    // max: 50,
     from: 0,
-    to: 50,
+    // to: 50,
 });
 
 

@@ -46,7 +46,7 @@ def bonusRating(request):
         
                 'bonuses_meta' : {
                     'count': paginator.count,
-                    'title' : "Самые выгодные бонусы",
+                    'title' : "Все бонусы",
                     'description' : 'В разделе расположены бесплатные и выгодные бонусы для пользователя......блабла',
                 },
                 #? Rudiment attribute. It should be implemented by .._meta
@@ -68,8 +68,8 @@ def bonusRating(request):
         'bonuses' : paginated_bonuses,
         'bonuses_meta' : {
             'count': paginator.count,
-            'title' : 'Самые выгодные бонусы',
-            'description' : 'В разделе расположены бесплатные и выгодные бонусы для пользователя......блабла',
+            'title' : 'Все бонусы',
+            'description' : 'В разделе расположены все бонусы бла бла бла......блабла',
         },
 #? Rudiment attribute. It should be implemented by .._meta
         'bonuses_count' : paginator.count, 
@@ -82,6 +82,8 @@ def bonusRating(request):
         },
 #? Rudiment attribute. It should be implemented by .._meta
         'sweet_bonuses_count' : sweet_bonuses.count,
+
+        'filter_box_meta': models.filterbox_meta_count(), 
     } 
 
     return render(request, 'base.html', context=context)
