@@ -1,6 +1,7 @@
-'use strict'
+// 'use strict'
 console.log('Main JS is connected successfully');
 
+console.log('test')
 // Elements
 const search_input = $("#search-field-text");
 const search_field_button = $('#search-field-button');
@@ -148,14 +149,7 @@ wager_slider_jqobj.ionRangeSlider({
 
 
 
-// Handling filter form 
-
-
-
-
-
-
-
+// Handling filter form
 let ajax_call = function (search_endpoint, request_parameters) {
     $.getJSON(search_endpoint, request_parameters)
     .done(response => {

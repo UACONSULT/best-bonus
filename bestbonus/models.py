@@ -149,7 +149,7 @@ def parsingObject(unparsed_obj):
     return parsed_obj
 
 
-# This function is an interface between views and FilterMechanism(models)
+# This is an rendering function for views 
 # Takes as an argument unparsed_json. Unparsed JSON - JSON Array with filter params we gotta apply
 #       and fetch proper Bonus QuerySet by these filter params 
 # Returns Bonus QuerySet    
@@ -166,6 +166,14 @@ def mainFilterWay(unparsed_json):
     
     return result_query
 
+# This is an rendering function for views
+# Takes as an argument search_query. 
+# Returns Bonus QuerySet
+def searchFilterWay(search_query):
+    # Returns Bonus QuerySet by search input
+    result_query = SearchBox(search_query).render()
+    
+    return result_query
 
 
 # This class is abstract class. It provides us flexible filter capabilities
@@ -268,6 +276,17 @@ class FilterMechanism:
             # If you wanna add a new range-slider, just add below
 
             )
+# Bonus searching
+    def searching(self, search_input):
+        self.bonuses_result = Bonus.objects.filter(
+            Q(two_word_desc__icontains=search_input)
+            | Q(bonus_desc__icontains=search_input)
+            | Q(bonus_digit__icontains=search_input)
+            | Q(dep__icontains=search_input)
+            # Q object for suplier title 
+            | Q(suplier__title__icontains=search_input)
+            )
+        return self.bonuses_result
 
 # Sorting
     def sorting(self):
@@ -361,4 +380,15 @@ class FilterBox(FilterMechanism):
 
 # Class for searching
 class SearchBox(FilterMechanism):
-    pass
+    def __init__(self, search_input):
+        self.search_input = search_input
+        # invokes FilterMechanism.__init__
+        super().__init__(search_input)
+        
+    def render(self):
+        self.searching(self.search_input)
+        
+        return self.bonuses_result
+
+    def __str__(self):
+        return self.bonuses_result
