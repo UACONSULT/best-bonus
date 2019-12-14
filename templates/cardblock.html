@@ -1,8 +1,8 @@
 
-
 {% if bonuses %}   
     <div class='contentMeta text-center'>
-        <h3>Лучшие бонусы({{ bonuses_count }})</h3>
+        <h3>{{ bonuses_meta.title }}({{ bonuses_meta.count }})</h3>
+        <p>{{ bonuses_meta.description }}</p>
     </div>
     <!-- Card block -->
     <div class="cardBlock">
