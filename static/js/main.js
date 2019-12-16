@@ -356,7 +356,7 @@ search_input.on('keyup', function () {
 // Paginaton
 paginator_button.on('click', function() {
     console.log('Paginator buttons works!!!');
-    const cardblock_content = $('.cardBlock')
+    const cardblock_content = $('.card-block')
     
     const request_parameters = {
         'super_secret' : 124125125,
@@ -375,7 +375,7 @@ paginator_button.on('click', function() {
             }
             
             //Takes html of cardblock div from server response 
-            let content_to_show = $(response.html_from_view).filter(".cardBlock").html();
+            let content_to_show = $(response.html_from_view).filter(".card-block").html();
             // console.log(content_to_show)
             
             //Adding response cardblock to current cardblock

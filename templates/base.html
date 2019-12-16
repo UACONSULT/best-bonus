@@ -9,29 +9,25 @@
     <!-- Latest compiled and minified CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
 
-    <!-- jQuery library -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-    
     <!-- Popper JS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
-    
     <!-- Latest compiled JavaScript -->
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script> 
 
-
-    <link rel="stylesheet" href="{% static 'css/basic.css' %}">
-
-
-
-<!-- SLIDER -->
- <!--Plugin CSS file with desired skin-->
- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ion-rangeslider/2.3.0/css/ion.rangeSlider.min.css"/>
- 
- <!--Plugin JavaScript file-->
- <script src="https://cdnjs.cloudflare.com/ajax/libs/ion-rangeslider/2.3.0/js/ion.rangeSlider.min.js"></script>
-
-<!--  -->
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css">
+    <!-- Material Design Bootstrap -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.10.1/css/mdb.min.css" rel="stylesheet">
+    <!-- JQuery -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <!-- MDB core JavaScript -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.10.1/js/mdb.min.js"></script>
+    <!--Plugin CSS file with desired skin-->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ion-rangeslider/2.3.0/css/ion.rangeSlider.min.css"/> 
+    <!--Plugin JavaScript file-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ion-rangeslider/2.3.0/js/ion.rangeSlider.min.js"></script>
     
+    <link rel="stylesheet" href="{% static 'css/basic.css' %}">
 
 
 <body>
@@ -60,22 +56,20 @@
         </div>
     </nav>
     
-
-    
     <!-- Desc block -->
     <header>
         <div id='descBlock' class='container'>
             <div>
-            <h3 class='text-center'>sdijidsgsd</h3>
-            <p>skdjgodshgsdighdsih iodshgo hdsigh odshg osdhugh sodhg iosdhgio sdiogh ios</p>
-            <p>skdjgodshgsdighdsih iodshgo hdsigh odshg osdhugh sodhg iosdhgio sdiogh ios</p>
-            <p>skdjgodshgsdighdsih iodshgo hdsigh odshg osdhugh sodhg iosdhgio sdiogh ios</p>
+                <h3 class='text-center'>Bestbonus - an application for bonus searching gambling, betting </h3>
+                    <hr>
+                <p>Completly free and open-source application what can find any bonus for your purposes</p>
+                <p>    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
 
-            <a href=""><button>ЦЕПАНУТЬ БОНУС</button></a>
+                <button type="button" class="btn btn-deep-orange">ЦЕПАНУТЬ БОНУС</button>
             </div>
 
-            <img src="{% static 'bonus2.png' %}" alt="">
-
+            <!-- <img src="{% static 'bonus2.png' %}" alt=""> -->
+            <img src="{% static 'pin-up-png-18.png' %}" alt="">
         </div>
     </header>
 
@@ -86,36 +80,24 @@
     <!-- Sidebar  -->
     
     
-    <!-- Content block -->    
-    <div id="mainBlock">
-        <aside>
+    <!-- Content block -->
+    <div id='mainBlock'>
+
+
+
+<aside class='card'>
             <form id='filter-form' action="">
             <ul>
 
                 <!-- Sorting dropdown -->
             <li>
-                <!-- <div class="dropdown">
-                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                              Сортировать
-                            </button>
-                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                              <a class="dropdown-item" href="#">Action</a>
-                              <a class="dropdown-item" href="#">Another action</a>
-                              <a class="dropdown-item" href="#">Something else here</a>
-                            </div>
-                </div>                 -->
-            
                 <p class='text-center'>Сортировать по </p>
-
-                <!-- <div class='sorting_block'> -->
                     <select name='sorting' id='sorting-select' class="custom-select custom-select-sm mb-3">
-
                         <option value="dep_min_to_max" selected>Депозиту(от меньшего к большему)</option>
                         <option value="dep_max_to_min">Депозиту(от большего к меньшему)</option>
 
                         <option value="bon_min_to_max">Размеру бонуса(от меньшего к большему)</option>
                         <option value="bon_max_to_min">Размеру бонуса(от большего к меньшему)</option>
-                        <hr>
                         <option value="doa_old_to_new">Дате создания(от старых к новым)</option>
                         <option value="doa_new_to_old">Дате создания(от новых к старым)</option>
 
@@ -124,33 +106,10 @@
             
                         <option value="ttl_min_to_max">Время жизни бонуса(от меньшего)</option>
                         <option value="ttl_max_to_min">Время жизни бонуса(от большего)</option>
-
-
-
                     </select>        
-                    <!-- <div class='triangle-wrapper'>
-                        <div class="triangle triangle-up"></div>
-                        <div class="triangle triangle-down"></div>
-                    </div> -->
-                <!-- </div> -->
-            
-            
-            
-            
-            
-            
             </li>
-            <hr>
-            <!-- Deposit checkbox -->
-            <li>
-                <!-- Только бездепозитные(54) -->
-                <!-- Только от надежных компаний(46) -->
-                <!-- Криптовалюта(56) -->
-                <!-- Лицензионные(23) -->
-                <!-- Сезонные(21) -->
-                <!-- Свежие(67) -->
-                
-            </li>
+                <hr>
+            <li></li>
             
             <li>
                 <div class="custom-control custom-checkbox mb-3">
@@ -245,20 +204,23 @@
 
         </ul>
     </form>
-    </aside>
+</aside>
+
     <!-- Content block-->
-    <div id='mainContent'>
+    <div id='main-content'>
         <!-- Searchbox -->
         <div id='searchBox'>
             <form class="form-inline">
                 <input id="search-field-text" name="q" value='' type="text" class="form-control" placeholder="Казино/бонус">
                 <div class="input-group-append">
-                    <button disabled id="search-field-button" class="btn btn-success" type="submit"><i class="fas fa-search"></i>Найти</button>  
+                    <button disabled id="search-field-button" class="btn btn-success" type="submit"><i class="fas fa-search"></i> Найти</button>  
                 </div>
                 <button id='clear_button' class="btn btn-outline-danger btn-sm" type="submit">Сбросить фильтр</button>
                 
+                
             </form>    
         </div>
+        
         
         <hr>
         {# Card content block #}
@@ -286,6 +248,10 @@
         <hr>
 
         <div id='sectionContent'>
+            <div id='right-section-content'>
+                <img width='480px' src="{% static 'gift.png' %}" alt="18+">
+            </div>
+
             <div id='left-section-content'>
                 <h4>Text header</h4>
                 <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Natus inventore aperiam error sunt. Accusantium omnis fugit voluptates temporibus est? Ipsum at dolore velit laboriosam porro placeat, numquam temporibus dignissimos fuga!</p>
@@ -294,14 +260,10 @@
 
                 <h4>Text header</h4>
                 <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Natus inventore aperiam error sunt. Accusantium omnis fugit voluptates temporibus est? Ipsum at dolore velit laboriosam porro placeat, numquam temporibus dignissimos fuga!</p>
+                <a href=""><button type="button" class="btn btn-default btn-sm">ЗАБРАТЬ ДЖЕКПОТ 1 000 000$</button></a>
 
             </div>
 
-            <div id='right-section-content'>
-                <img src="{% static 'money-hand.png' %}" alt="18+">
-                <p>adsjghsdoghusd huogshduhg sdh</p>
-                <a href=""><button class='card-button'>Button</button></a>
-            </div>
 
         </div>
     </section>
@@ -318,7 +280,19 @@
             </div>
             
             <div>
-                <p><a href="">Связаться с нами</a></p>
+                <!--Facebook-->
+                <a class="btn-floating btn-lg btn-fb" type="button" role="button"><i class="fab fa-facebook-f"></i></a>
+                <!--Twitter-->
+                <a class="btn-floating btn-lg btn-tw" type="button" role="button"><i class="fab fa-twitter"></i></a>
+                <!--Instagram-->
+                <a class="btn-floating btn-lg btn-ins" type="button" role="button"><i class="fab fa-instagram"></i></a>
+                <!--Vkontakte-->
+                <a class="btn-floating btn-lg btn-vk" type="button" role="button"><i class="fab fa-vk"></i></a>
+                <!--Youtube-->
+                <a class="btn-floating btn-lg btn-yt" type="button" role="button"><i class="fab fa-youtube"></i></a>
+                <!--Email-->
+                <a class="btn-floating btn-lg btn-email" type="button" role="button"><i class="fas fa-envelope"></i></a>
+                <p id='footer-contact'><a href="">Связаться с нами</a></p>
     
     
             </div>
