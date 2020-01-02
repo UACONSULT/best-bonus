@@ -49,7 +49,10 @@ let scheduled_function = false;
 
 //Endpoints
 const paginator_endpoint = '/';
-const search_endpoint = 'ajax-search/';
+// const search_endpoint = 'ajax-search/';
+
+const filter_endpoint = 'ajax-filter/'
+const search_endpoint = 'ajax-search/'
 
 // Next page number variable for AJAX Paginator
 let current_page = 2;
@@ -84,21 +87,20 @@ wager_slider_jqobj.ionRangeSlider({
 
 
 // Handling filter form
-let ajax_call = function (search_endpoint, request_parameters) {
-    $.getJSON(search_endpoint, request_parameters)
+let ajax_call = function (endpoint, request_parameters) {
+
+    $.getJSON(endpoint, request_parameters)
     .done(response => {
-            cardblock_div.fadeTo('slow', 0).promise().then(() => {
-                // replace the HTML contents
-                cardblock_div.html(response['html_from_view'])
-                cardblock_div.fadeTo('slow', 1)
-            })
+        cardblock_div.fadeTo('slow', 0).promise().then(() => {
+            // replace the HTML contents
+            cardblock_div.html(response['html_from_view'])
+            cardblock_div.fadeTo('slow', 1)
         })
+    })
 };
 
 
 // Event handlers
-
-
 
 // Search clear button event
 clear_button.on('click', function(e) {
@@ -112,7 +114,7 @@ clear_button.on('click', function(e) {
 filter_form.on('submit', function(e){
     e.preventDefault();
     let form_data = $(this).serializeArray();
-    ajax_call(search_endpoint, {'filter': true, 'form_data': JSON.stringify(form_data)});
+    ajax_call(filter_endpoint, {'filter': true, 'form_data': JSON.stringify(form_data)});
 });
 
 // Filter refresh event

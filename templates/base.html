@@ -86,30 +86,28 @@
 
 
 <aside class='card'>
-            <form id='filter-form' action="">
-            <ul>
-
-                <!-- Sorting dropdown -->
+    <form id='filter-form' action="">
+        <ul>
+            <!-- Sorting dropdown -->
             <li>
                 <p class='text-center'>Сортировать по </p>
-                    <select name='sorting' id='sorting-select' class="custom-select custom-select-sm mb-3">
-                        <option value="dep_min_to_max" selected>Депозиту(от меньшего к большему)</option>
-                        <option value="dep_max_to_min">Депозиту(от большего к меньшему)</option>
+                
+                <select name='sorting' id='sorting-select' class="custom-select custom-select-sm mb-3">
+                    <option value="dep_min_to_max" selected>Депозиту(от меньшего к большему)</option>
+                    <option value="dep_max_to_min">Депозиту(от большего к меньшему)</option>
 
-                        <option value="bon_min_to_max">Размеру бонуса(от меньшего к большему)</option>
-                        <option value="bon_max_to_min">Размеру бонуса(от большего к меньшему)</option>
-                        <option value="doa_old_to_new">Дате создания(от старых к новым)</option>
-                        <option value="doa_new_to_old">Дате создания(от новых к старым)</option>
+                    <option value="bon_min_to_max">Размеру бонуса(от меньшего к большему)</option>
+                    <option value="bon_max_to_min">Размеру бонуса(от большего к меньшему)</option>
+                    <option value="doa_old_to_new">Дате создания(от старых к новым)</option>
+                    <option value="doa_new_to_old">Дате создания(от новых к старым)</option>
 
-                        <option value="wager_min_to_max">Вагеру(от 0)</option>
-                        <option value="wager_max_to_min">Вагеру(до 0)</option>
+                    <option value="wager_min_to_max">Вагеру(от 0)</option>
+                    <option value="wager_max_to_min">Вагеру(до 0)</option>
             
-                        <option value="ttl_min_to_max">Время жизни бонуса(от меньшего)</option>
-                        <option value="ttl_max_to_min">Время жизни бонуса(от большего)</option>
-                    </select>        
-            </li>
-                <hr>
-            <li></li>
+                    <option value="ttl_min_to_max">Время жизни бонуса(от меньшего)</option>
+                    <option value="ttl_max_to_min">Время жизни бонуса(от большего)</option>
+                </select>        
+            </li><hr>
             
             <li>
                 <div class="custom-control custom-checkbox mb-3">
@@ -132,12 +130,8 @@
                 <div class="custom-control custom-checkbox mb-3">
                         <input type="checkbox" class="custom-control-input" id="customCheck5" name="season">
                         <label class="custom-control-label" for="customCheck5">Сезонные<span>({{ filter_box_meta.season_count }})</span></label>
-                </div>
-                
-                
+                </div>    
                 <hr>
-            
-            
             </li>
             
             <!-- Все/Казино(563)/БК(435)/Кейсы(201) -->
@@ -153,33 +147,28 @@
 
             <!-- Вагер -->
             <li class='custom-range-input-outer'>
-                    <p class='text-center'>Вагер</p>
+                <p class='text-center'>Вагер</p>
     
-                    <input id='wager-js-range-slider' data-to={{ filter_box_meta.wager_range_max }} data-max={{ filter_box_meta.wager_range_max }} type="text" class="js-range-slider" name="wager-js-range-slider" value="" />
+                <input id='wager-js-range-slider' data-to={{ filter_box_meta.wager_range_max }} data-max={{ filter_box_meta.wager_range_max }} type="text" class="js-range-slider" name="wager-js-range-slider" value="" />
     
-                        <div class='custom-range-input-block'>
-                            <input id='wager_range_input_from' type="text" class="form-control" placeholder="0">
-                            <input id='wager_range_input_to' type="text" class="form-control" placeholder="{{ filter_box_meta.wager_range_max }}x">
-                        </div>
-                </li><hr>
+                <div class='custom-range-input-block'>
+                    <input id='wager_range_input_from' type="text" class="form-control" placeholder="0">
+                    <input id='wager_range_input_to' type="text" class="form-control" placeholder="{{ filter_box_meta.wager_range_max }}x">
+                </div>
+            </li><hr>
 
 
             <!-- Размер бонуса -->
             <li class='custom-range-input-outer'>
-                    <p class='text-center'>Размер бонуса</p>
+                <p class='text-center'>Размер бонуса</p>
     
-                    <input id='bonus-js-range-slider' data-to={{ filter_box_meta.bonus_range_max }} data-max={{ filter_box_meta.bonus_range_max }} type="text" class="js-range-slider" name="bonus-js-range-slider" value="" />    
+                <input id='bonus-js-range-slider' data-to={{ filter_box_meta.bonus_range_max }} data-max={{ filter_box_meta.bonus_range_max }} type="text" class="js-range-slider" name="bonus-js-range-slider" value="" />    
     
-                        <div class='custom-range-input-block'>
-                            <input id='bonus_range_input_from' type="text" class="form-control" placeholder="От 0">
-                            <input id='bonus_range_input_to' type="text" class="form-control" placeholder="До {{ filter_box_meta.bonus_range_max }}$">
-                        </div>
-                </li><hr>            
-
-
-
-
-
+                <div class='custom-range-input-block'>
+                    <input id='bonus_range_input_from' type="text" class="form-control" placeholder="От 0">
+                    <input id='bonus_range_input_to' type="text" class="form-control" placeholder="До {{ filter_box_meta.bonus_range_max }}$">
+                </div>
+            </li><hr>            
 
             <!-- Размер депозита для бонуса -->
             <li class='custom-range-input-outer'>
@@ -196,11 +185,10 @@
 
             <li>
                 <div class="btn-group">
-                <button type="submit" class="btn btn-success">Применить</button>
-                <button id='filter-refresh-button' type="button" class="btn btn-danger">Сбросить</button>
+                    <button type="submit" class="btn btn-success">Применить</button>
+                    <button id='filter-refresh-button' type="button" class="btn btn-danger">Сбросить</button>
                 </div> 
             </li>
-
 
         </ul>
     </form>
@@ -224,16 +212,14 @@
         
         <hr>
         {# Card content block #}
-        <div class="alert alert-primary" role="alert">
-  This is a primary alert—check it out!
-</div>
-{% if messages %}
-    {% for message in messages %}
-    <div class="container alert alert-{{ message.tags }}" role="alert">
-        {{ message }}
-    </div>
-    {% endfor %}
-{% endif %}
+
+    {% comment %} {% if messages %}
+        {% for message in messages %}
+        <div class="container alert alert-{{ message.tags }}" role="alert">
+            {{ message }}
+        </div>
+        {% endfor %}
+    {% endif %} {% endcomment %}
 
 
         <div id="replaceable-cardblock">

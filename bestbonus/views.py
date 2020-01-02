@@ -6,17 +6,13 @@ from django.template.loader import render_to_string
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.http import JsonResponse
 from django.contrib import messages
+from django.views.generic import View
 
 from bestbonus import models
 
 
-# class allBonusesView(View)
-    # def get(*args, **kwargs)
-    # def post(*args, **kwargs)
 
-
-# Returns main page. Returns paginated bonuses via AJAX
-# Paginates all bonuses, shows sweet bonuses(no dep).
+# Returns the main page. Paginates bonuses via AJAX
 def bonusRating(request):
     bonuses = models.Bonus.objects.all()
 
@@ -26,8 +22,8 @@ def bonusRating(request):
 
     paginated_bonuses = paginator.get_page(page)
     
-# Executes if an user clicks a paginaton button
-# Checks if request is AJAX. If so returns JSON response with next paginated page
+    # Executes if an user clicks a paginaton button
+    # Checks if request is AJAX. If so returns JSON response with next paginated page
     if request.is_ajax():
         data = {}
 
@@ -46,17 +42,15 @@ def bonusRating(request):
                     'title' : "Все бонусы",
                     'description' : 'В разделе расположены бесплатные и выгодные бонусы для пользователя......блабла',
                 },
-                }
-        )
+            })
         # messages.info(request, 'Pagination works!!')
         return JsonResponse(data=data)
-    
-# If request is not AJAX(event was not triggered)
-# Just returns first all bonuses paginator page 
 
-#! Think about adding a paginaotr to sweet bonuses
-# And returns all sweet bonuses
-# Sweet bonuses = no dep bonuses
+    # If request is not AJAX(pagination button was not clicked)
+    # Just returns first all bonuses paginator page 
+
+    # TODO Add pagination to sweet bonuses
+    # Sweet bonuses = no dep bonuses
     sweet_bonuses = models.Bonus.objects.filter(dep_bool=False)
 
     context = {
@@ -80,48 +74,14 @@ def bonusRating(request):
     return render(request, 'base.html', context=context)
 
 
+# Searching
 # Calls when user types some query text into search input. Works using AJAX
 # Looks up bonuses comparing the query and return result JSON 
-def ajaxSearch(request):
-# Search input data
-    search_query = request.GET.get('q', False)
-
-# Marker variable
-# Shows filter is called from filter-box
-# Why do we use this var instead of 'form-data'??
-# 'form-data' provides a non-empty object. So we cannot capture when when we have to work with it 
-    filter_ = request.GET.get('filter', False)
-    data = {}
-
-    # AJAX can work with filter or search
-    # Checks if filter is triggered. So if it returns JSON response with a template what contains filtered bonus queryset
-    # If not, it returns JSON response filtered by search input query           
+def search_ajax(request):
     if request.is_ajax():
-        # Filtering
-        if filter_:
-            # Deserialization JSON object
-            # 'form_data' contains different filter params what we need to apply to Filter Mechanism
-            form_data = json.loads(request.GET.get('form_data'))
+        data = {}
+        search_query = request.GET.get('q', False)
 
-            # mainFilterWay - rendering function of Filter Mechanism for filter-box
-            # Returns bonus queryset what fits filter params('form_data'))
-            bonuses = models.Bonus.get_filtered_bonuses(form_data)
- 
-            data['html_from_view'] = render_to_string(
-                template_name="cardblock.html", 
-                context={
-                    'bonuses': bonuses,
-                    
-                    'bonuses_meta' : {
-                        'count': bonuses.count,
-                        'title' : "Бонусы по вашему запросу",
-                        'description' : 'Бонусы по вашему запросу, самые прикольные......блабла',
-                    },
-                    }
-            )
-            return JsonResponse(data=data)
-        
-        # Searching
         # Returns bonus queryset what fits search input
         bonuses = models.Bonus.get_searched_bonuses(search_query)
 
@@ -130,10 +90,38 @@ def ajaxSearch(request):
             context={
                 'bonuses': bonuses,
                 'bonuses_meta' : {
-                        'count': bonuses.count,
-                        'title' : "Бонусы по вашему поиску",
-                        'description' : 'Обнаруженые бонусы по вашему запросу!!!........',
-                    },
-                }
+                    'count': bonuses.count,
+                    'title' : "Бонусы по вашему поиску",
+                    'description' : 'Обнаруженые бонусы по вашему запросу!!!........',
+                },
+            }
         )
+        return JsonResponse(data=data)
+
+
+# Filtering
+# Calls when user submit filter box form. Works using AJAX
+# Looks up bonuses comparing the query and return result JSON 
+def filter_ajax(request):
+    if request.is_ajax():
+        data = {}
+        
+        # Deserialization JSON object
+        # 'form_data' contains different filter params what we need to apply to Filter Mechanism
+        form_data = json.loads(request.GET.get('form_data'))
+
+        # Returns bonus queryset what fits filter params('form_data'))
+        bonuses = models.Bonus.get_filtered_bonuses(form_data)
+ 
+        data['html_from_view'] = render_to_string(
+            template_name="cardblock.html", 
+            context={
+                'bonuses': bonuses,
+                    
+                'bonuses_meta' : {
+                    'count': bonuses.count,
+                    'title' : "Бонусы по вашему запросу",
+                    'description' : 'Бонусы по вашему запросу, самые прикольные......блабла',
+                },
+        })
         return JsonResponse(data=data)
