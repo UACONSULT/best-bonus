@@ -224,6 +224,18 @@
         
         <hr>
         {# Card content block #}
+        <div class="alert alert-primary" role="alert">
+  This is a primary alert—check it out!
+</div>
+{% if messages %}
+    {% for message in messages %}
+    <div class="container alert alert-{{ message.tags }}" role="alert">
+        {{ message }}
+    </div>
+    {% endfor %}
+{% endif %}
+
+
         <div id="replaceable-cardblock">
             {% include 'cardblock.html' with bonuses=bonuses bonuses_meta=bonuses_meta %}
             {% include 'cardblock.html' with bonuses=sweet_bonuses bonuses_meta=sweet_bonuses_meta %}
