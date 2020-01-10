@@ -25,13 +25,13 @@ a:hover {
 
 }
 
-#leftSide {
+#leftside {
     display: flex;
     align-items: center;
 }
 
 
-#leftSideName {
+#leftside-name {
     text-transform: uppercase;
     font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
     letter-spacing: 1.42px;
@@ -54,7 +54,6 @@ body {
     "footer footer footer";
 
     grid-template-columns: 20% 1fr 1fr;
-    /* grid-template-rows: 100px 300px 1fr 300px 300px; */
 
 
     color:white;
@@ -67,10 +66,7 @@ body {
 nav {
     grid-area: nav;
     background-color: white;
-
     padding: 5px;
-
-
 }
 
 #nav-wrapper {
@@ -84,15 +80,13 @@ nav {
 }
 
 
-#rightSide>ul {
+#rightside>ul {
     display: flex;
     justify-content: space-between;
     font-size: 18px;
 }
 
-#rightSide>ul>li>a {
-    /* color:brown; */
-    /* font-size: 25px; */
+#rightside>ul>li>a {
     font-weight: 700;
     text-transform: uppercase;
     margin-inline: 10px;
@@ -102,7 +96,7 @@ nav {
 }
 
 
-#rightSide>ul>li>a:hover {
+#rightside>ul>li>a:hover {
     color:red;
     text-decoration: none;
 }
@@ -116,24 +110,23 @@ nav {
 header {
     grid-area: desc;
     color: white !important;
-    /* padding-block: 20px; */
     background-color: black;
 }
-#descBlock {
+#descblock {
     display: flex;
     justify-content: space-around;
 }
 
-#descBlock>div {
+#descblock>div {
     padding-block: 20px;
 }
 
-#descBlock>img {
+#descblock>img {
     width: 200px;
     min-width: 200px;
 }
 
-#descBlock>div>button {
+#descblock>div>button {
     font-size: 20px;
     font-weight: 700;
     margin: auto;
@@ -141,11 +134,12 @@ header {
 }
 
 /* Content block */
-#mainBlock {
+#mainblock {
     grid-area: content;
     display: flex;
     align-items: stretch;
     justify-content: flex-start;
+    flex-wrap: wrap;
     background-color: white;
 
     margin-inline: auto;
@@ -155,15 +149,15 @@ header {
     width: 100%;
 }
 
-#clear_button {
-    /* color:white !important; */
+#replaceable-cardblock {
+    /* grid-area: content; */
 }
 
 .contentMeta {
     margin-block: 10px;
-    color: black;
-    
+    color: black;    
 }
+
 .contentMeta>h3 {
     text-transform: uppercase;
     font-weight: 700;
@@ -194,6 +188,7 @@ aside.card  {
     min-width: 300px;
     background-color: white;
     color: black
+    
 }
 
 
@@ -262,7 +257,9 @@ select {
 }
 
 /*  */
-
+.input-group-append {
+    height: 38px;
+}
 
 
 
@@ -288,11 +285,11 @@ select {
     
     max-width: 300px;
     width: 300px;
-    margin: 3px;
     text-align: center;
     border: none;
     border-radius: none;
     justify-content: space-between;
+    margin-inline: auto;
 }
 
 .card>h2 {
@@ -327,9 +324,10 @@ select {
 
 /* Search box */
 
-#searchBox>form {
+#searchbox>form {
     flex-wrap: nowrap !important;
     justify-content: center;
+    width: 100%;
 }
 
 
@@ -486,7 +484,27 @@ button:hover {
     margin-right: 3px;
 }
 
+/* Floating button */
+label[for="toggle"] {
+    display: block;
+    margin-bottom: 0;
+}
 
+.btn-floating {
+    padding: 10px;
+    border-radius: 30px;
+}
+
+#floating-filter-button {
+    position: fixed;
+    right: 10px;
+    top: 20px;
+    z-index: 1000;
+
+    display: none;
+}
+
+/*  */
 
 .mb-3 {
     margin-bottom: 0px !important;
@@ -495,4 +513,83 @@ button:hover {
 .irs--flat {
     height: 50px;
     margin-top: 0px;   
+}
+
+/* Width less or equal 970px */
+@media screen and (max-width: 980px) {
+#leftside-name {
+    display: none;
+}
+#floating-filter-button {
+    display: block;
+}
+#descblock>img {
+    display: none;
+}
+#descblock>div>button {
+    width: 100%;
+}
+#mainblock>aside {
+    display: none;
+    width: 100%;
+    max-width: none;
+    margin-top: 0px;
+    margin-bottom: 50px;
+}
+
+#mainblock {
+    padding-block: 0px;
+}
+
+#searchbox>form {
+    margin-top: 10px;
+}
+
+
+#leftside {
+    margin-bottom: 20px;
+}
+#rightside>ul {
+    flex-wrap: wrap;
+}
+
+#main-content {
+    width: 100%;
+}
+
+.paginate-block {
+    padding-inline: 0px;
+}
+
+
+section {
+    width: 100%;
+    padding-inline: 0px;
+}
+
+#right-section-content {
+    display: none;
+}
+
+#left-section-content {
+    width: 100%;
+    padding-inline: 30px;
+}
+
+
+footer>div {
+    flex-wrap: wrap;
+    width: 100%;
+}
+
+
+}
+
+
+
+@media screen and (max-width: 700px) {
+.card-block {
+    padding-left: 50px;
+}
+
 }

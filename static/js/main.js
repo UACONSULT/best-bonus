@@ -1,7 +1,6 @@
-'use strict';
+'use strict'
 
 // Elements
-
 // Search
 const search_input = $("#search-field-text");
 const search_field_button = $('#search-field-button');
@@ -28,12 +27,11 @@ const bonus_range_input_to = $('#bonus_range_input_to');
 const wager_range_input_from = $('#wager_range_input_from');
 const wager_range_input_to = $('#wager_range_input_to');
 
-const type_select = $('#type_select'); // ! Delete
-const sorting_select = $('#sorting-select');//! Delete
-
 const filter_form = $('#filter-form');
 const filter_refresh_button = $('#filter-refresh-button');
 
+const filterbox = $('aside');
+const floating_filter_button = $('#floating-filter-button');
 
 // Organization of relations between range slider and their inputs 
 const range_sliders = [
@@ -102,6 +100,18 @@ let ajax_call = function (endpoint, request_parameters) {
 
 // Event handlers
 
+// Floating button event
+floating_filter_button.on('click', function (e) {
+
+    filterbox.toggle("slow");
+    
+    document.getElementById("filterbox-anchor").scrollIntoView({
+        behavior: 'smooth',
+        block: 'start' //scroll to top of the target element
+    });
+
+});
+
 // Search clear button event
 clear_button.on('click', function(e) {
     e.preventDefault();
@@ -115,6 +125,7 @@ filter_form.on('submit', function(e){
     e.preventDefault();
     let form_data = $(this).serializeArray();
     ajax_call(filter_endpoint, {'filter': true, 'form_data': JSON.stringify(form_data)});
+        
 });
 
 // Filter refresh event

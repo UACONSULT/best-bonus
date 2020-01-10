@@ -21,7 +21,6 @@ def bonusRating(request):
     page = request.GET.get('page', 1)
 
     paginated_bonuses = paginator.get_page(page)
-    
     # Executes if an user clicks a paginaton button
     # Checks if request is AJAX. If so returns JSON response with next paginated page
     if request.is_ajax():
@@ -71,7 +70,7 @@ def bonusRating(request):
         'filter_box_meta': models.filterbox_meta_count(), 
     } 
 
-    return render(request, 'base.html', context=context)
+    return render(request, 'all-bonuses.html', context=context)
 
 
 # Searching
