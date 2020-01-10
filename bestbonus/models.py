@@ -17,17 +17,14 @@ BONUS_TYPES = (
 
 )
 
-
-'''
-Suplier/Casino entity describes app/compnay/resource what distributes bonuses.
-e.g. Online casino, Betting company, Gambling app, .......
-
-'''
 class Suplier(models.Model):
+    '''
+    Suplier/Casino entity sdescribes app/compnay/resource what distributes bonuses.
+    e.g. Online casino, Betting company, Gambling app, etc
+    '''
 
     title = models.CharField(max_length=100, unique=True, null=False, blank=False, verbose_name="Name")
     image = models.ImageField(upload_to="casino_logos/", blank=True, null=True, verbose_name="Suplier image")
-    
     ca_license_bool = models.BooleanField(default=False, verbose_name="License")
     suplier_type = models.IntegerField(choices=SUPLIER_TYPES, default=0)
 
@@ -35,74 +32,226 @@ class Suplier(models.Model):
         return self.title
 
 
-# Created for DOE field default in Bonus model 
-# Yeah, i know it might not be quite pythonic decision, but Django does not serialize lambda functions
 def today_plus_30_days():
-    return datetime.date.today() + datetime.timedelta(days=30) 
+    # Created for DOE field default in Bonus model 
+    # It is here, because Django does not serialize lambda functions
+    return datetime.date.today() + datetime.timedelta(days=30)
 
-'''
-Bonus entity bonus with some informative attributes for gambling dawgs
-e.g. 100% No dep bonus for 365bet.......
-    
-'''
+def get_parsed_json(unparsed_obj):
+    """
+    Takes JSON response array and returns a parsed dict for FilterMechanism 
+    e.g
+    Takes:
+    .............parsingObject: UNPARSED(list)
+    [{'name': 'sorting', 'value': 'dep_min_to_max'}, 
+    {'name': 'type', 'value': 'all'}, 
+    {'name': 'wager-js-range-slider', 'value': '0;42'}, 
+    {'name': 'bonus-js-range-slider', 'value': '0;5000'}, 
+    {'name': 'deposit-js-range-slider', 'value': '0;10000'}]
+
+    Returns:
+    .................parsingObject: PARSED(dict)
+    {'sorting': 'dep_min_to_max', 'type': 'all', 'wager-js-range-slider': '0;42',
+    'bonus-js-range-slider': '0;5000', 'deposit-js-range-slider': '0;10000'}
+
+    -- unparsed_obj argument is JSON array with filter box parameters
+    """
+
+    # Nested dict comprehension
+    parsed_obj = { key:value for (key, value) in [o.values() for o in unparsed_obj] }
+
+    return parsed_obj
+
+
 class Bonus(models.Model):
+    '''
+    Bonus entity
+    e.g. 100% No dep bonus by 365bet...
+    '''
+
+    # Mapping filters to Q objects
+    _FILTER_LIST = {
+        'sorting': {
+            'bon_max_to_min': 'dep',
+            'bon_min_to_max': '-dep',
+            'dep_min_to_max': 'bonus_digit',
+            'dep_max_to_min': '-bonus_digit',
+            'doa_old_to_new': 'doa',
+            'doa_new_to_old': '-doa',
+            'wager_min_to_max': 'wager',
+            'wager_max_to_min': '-wager',
+            # 'ttl_min_to_max': 'ttl',
+            # 'ttl_max_to_min': '-ttl',
+        },
+
+        'type': {
+            'casino': Q(suplier__suplier_type=0),
+            'betting': Q(suplier__suplier_type=1),
+        },
+
+        # ?Checkboxes
+        'nodep': Q(dep_bool=False),  
+        'license': Q(suplier__ca_license_bool=True),
+        # 'safe': ,
+        # 'fresh':,
+        
+        # ? If you wanna add new filter/sorting. ADD HERE.
+    }
+
     two_word_desc = models.CharField(max_length=300, blank=False, verbose_name="About the bonus in 2 words")    
     
-# If we have freespin for example, the value should be equals zero
+    # If we have freespin for example, the value should be equals zero
     bonus_digit = models.PositiveSmallIntegerField(default=0, validators=[MaxValueValidator(1000000)],\
         verbose_name="Bonus value")
     bonus_desc = models.TextField(max_length=1500, blank=True, null=True, verbose_name="Bonus description")
     suplier = models.ForeignKey(Suplier, on_delete=models.CASCADE)
     image = models.ImageField(upload_to='bonus_images/', blank=True, null=True, verbose_name='Bonus image')
 
-# Deposit or non-dep 
+    # Deposit or non-dep 
     dep_bool = models.BooleanField(default=True, blank=False)
     dep = models.PositiveSmallIntegerField(blank = False)
 
-# Date of adding
+    # Date of adding
     doa = models.DateField(default=datetime.date.today, verbose_name="Date of adding")
-# Date of expiring    
+    # Date of expiring    
     doe = models.DateField(default=today_plus_30_days, verbose_name="Date of expiring")
 
     wager = models.SmallIntegerField(default=0, blank=True, \
         validators=[MaxValueValidator(100)], verbose_name='Bonus wager')
     bonus_type = models.IntegerField(choices=BONUS_TYPES, default=0)
 
-
-# Shows time-to-live of bonus(how much time you have to use the bonus til it expires)
-# Checks DOE is not less than DOA. If it less it returns None.
-# Returns datetime.date
+    # Shows time-to-live of bonus(how much time you have to use the bonus till it expires)
+    # Checks DOE is not less than DOA. Returns datetime.date
     def ttl_full(self):
         try:
-            # If Date of expiring for some reasons is earlier than date of adding =
+            # If Date of expiring for some reasons is earlier than date of adding
             #   - it equals DOE value to DOA value. So ttl is 0, but it will bypass a bunch of issues
             if self.doe < self.doa:
                 self.doe = self.doa
                 self.save()
-            # Way to retrive 'time to live'
+
             ttl_obj = self.doe - self.doa
             return ttl_obj
-        # If something got wrong it will return 0 
         except:
-            print('....Some exception raised!!!')
             return 0
 
-# Method retuns time-to-live bonus value in days
-# Calls ttl_full methond(because it checks DOE and DOA distinction)
+    # Time to live of a bonus in days
     def ttl_days(self):
         date_object = self.ttl_full()
         return date_object.days
 
-# Method retuns time-to-live bonus value in hours
+    # Time to live of a bonus in hours
     def ttl_hours(self):
         date_object = self.ttl_full()
         return date_object.days * 24
 
-
-# Returns related bonuses to our casino instance
-    def otherBonuses(self):
+    # Returns related bonuses to our suplier instance
+    def get_other_bonuses(self):
         return self.suplier.bonus_set.all()
 
+    @staticmethod
+    def create_mock(amount):
+        """
+        Creates mock bonus object        
+        """
+        pass
+
+    @classmethod
+    def _filtering(cls, parsed_JSON):
+        """
+        Implementation of Filter Box filtering 
+
+        # FILTERING ROADMAP:
+        #
+        # 1) We gotta filter by selected Bonus type(Casino/Betting/All...)
+        # 2) Apply checkboxes
+        # 3) Aplly Range sliders params(wager, bonus, deposit)
+        # 4) Sorting result queryset
+        #
+        # SCHEME OF FILTERING. The order is vital 
+        #   TYPE -> CHECKBOXES -> RANGE SLIDERS -> SORTING ----> Result queryset 
+        """    
+
+        # Type checking 
+        # !Type checking section gotta occurs first in the order
+        # Fetches Bonuses by certain type. Returns QuerySet with Bonuses taken by filter 'type'
+        # e.g. Casino/Betting/All. Fetches all Casino Suplier instances(all casinos in current DB)
+        if 'type' in parsed_JSON and parsed_JSON['type'] != 'all':
+            # _ is just decoration 
+            _ = parsed_JSON['type']
+            result_queryset = cls.objects.filter(cls._FILTER_LIST['type'][_])
+            
+        # Happens if 'type' is 'all' or something got wrong
+        else:
+            result_queryset = cls.objects.all()
+
+        # Apply checkboxes for Bonus model
+        # TODO Make checkbox filtering using for loop. Example below
+        # for checkbox in cls._FILTER_LIST['checkbox'].items():
+        #     if checkbox in parsed_JSON:
+        #         pass
+        #     pass
+
+        # License checking
+        if 'license' in parsed_JSON:
+            result_queryset = result_queryset.filter(cls._FILTER_LIST['license'])
+
+        # Nodep checking 
+        if 'nodep' in parsed_JSON:
+            result_queryset = result_queryset.filter(cls._FILTER_LIST['nodep'])
+        
+        #? Create below any checkbox filters if you want so
+
+        #? /
+ 
+        # Range sliders. Apply range slider filters
+        result_queryset = result_queryset.filter( 
+            Q(wager__range = parsed_JSON['wager-js-range-slider'].split(';')) &\
+            Q(dep__range = parsed_JSON['deposit-js-range-slider'].split(';')) &\
+            Q(bonus_digit__range = parsed_JSON['bonus-js-range-slider'].split(';')) \
+            # If you wanna add a new range-slider, just add below
+
+        )
+        # Sorting. Sorting gotta occurs after all filters in the order
+        result_queryset = result_queryset.order_by(cls._FILTER_LIST['sorting'][parsed_JSON['sorting']])
+        
+        return result_queryset
+
+
+    @classmethod
+    def get_filtered_bonuses(cls, unparsed_JSON):
+        # Bonus filtering
+        # Fetchs Bonus queryset by filter params from unparsed_JSON
+        # -- unparsed_JSON - JSON Array with filter params
+    
+        # Input data should be parsed(by parsingObject function, see above) JSON object
+        # {'sorting': 'dep_min_to_max', 'type': 'all', 'wager-js-range-slider': '0;42',
+        #  'bonus-js-range-slider': '0;5000', 'deposit-js-range-slider': '0;10000'}
+    
+        # Parsing unparsed_json. Obj is readable now for filtering method  
+        obj = get_parsed_json(unparsed_JSON)
+
+        # Returns Bonus queryset by filter params from parsed JSON    
+        result_query = cls._filtering(obj)
+
+        return result_query
+
+    @classmethod
+    def get_searched_bonuses(cls, search_input):
+        # Bonus searching for Search Input
+        # -- search_input - search input value(e.g. 'TTR Casinso'...etc)
+
+        bonuses_result = cls.objects.filter(
+            Q(two_word_desc__icontains=search_input)
+                | Q(bonus_desc__icontains=search_input)
+                | Q(bonus_digit__icontains=search_input)
+                | Q(dep__icontains=search_input)
+                # Q object for suplier title 
+                | Q(suplier__title__icontains=search_input)
+            )
+        
+        # Returns Bonus queryset by search input
+        return bonuses_result
 
     class Meta:
         ordering = ['-bonus_digit']
@@ -110,32 +259,24 @@ class Bonus(models.Model):
     def __str__(self):
         return f'{self.suplier.title} : {self.two_word_desc}'
 
-#? Functions used in tests, scripts help to find min/max values for range sliders
-# Wager max value
-def wagerMax():
-    pass
 
-# Deposit max value
-def depMax():
-    pass
-
-#! Comment this
+# Returns metadata(like max amount of nodep bonuses...etc) dict for filterbox
 def filterbox_meta_count():
-# ! Reasign this var to empty dict
+    # ! Reassign this var to empty dict
     filter_box_meta = {
-            'nodep_count' : 12,
-            'license_count' : 25,
-            'safe_count' : 42,
-            'fresh_count' : 6,
-            'season_count' : 2,
+        'nodep_count' : 12,
+        'license_count' : 25,
+        'safe_count' : 42,
+        'fresh_count' : 6,
+        'season_count' : 2,
         
-            'all' : 300,
-            'casino': 154,
-            'betting': 25,
+        'all' : 300,
+        'casino': 154,
+        'betting': 25,
 
-            'wager_range_max' : 150,
-            'bonus_range_max' : 4000,
-            'dep_range_max' : 12540,
+        'wager_range_max' : 150,
+        'bonus_range_max' : 4000,
+        'dep_range_max' : 12540,
     }
 
     filter_box_meta['nodep_count'] = Bonus.objects.filter(Q(dep_bool=False)).count()
@@ -151,267 +292,3 @@ def filterbox_meta_count():
     filter_box_meta['dep_range_max'] = Bonus.objects.aggregate(Max('dep'))['dep__max']
 
     return filter_box_meta
-
-
-# Takes deserialized JSON response array and returns a parsed dict for FilterMechanism 
-# e.g of parsingObject in action
-"""
-.................parsingObject: UNPARSED(list)
-[{'name': 'sorting', 'value': 'dep_min_to_max'}, 
-{'name': 'type', 'value': 'all'}, 
-{'name': 'wager-js-range-slider', 'value': '0;42'}, 
-{'name': 'bonus-js-range-slider', 'value': '0;5000'}, 
-{'name': 'deposit-js-range-slider', 'value': '0;10000'}]
-
-
-.................parsingObject: PARSED(dict)
-{'sorting': 'dep_min_to_max', 'type': 'all', 'wager-js-range-slider': '0;42',
- 'bonus-js-range-slider': '0;5000', 'deposit-js-range-slider': '0;10000'}
-
-"""
-# Argument 'unparsed_obj' is JSON array rendered by main.js
-def parsingObject(unparsed_obj):
-    # Nested dict comprehension
-    parsed_obj = { key:value for (key, value) in [o.values() for o in unparsed_obj] }
-
-    return parsed_obj
-
-
-# This is an rendering function for views 
-# Takes as an argument unparsed_json. Unparsed JSON - JSON Array with filter params we gotta apply
-#       and fetch proper Bonus QuerySet by these filter params 
-# Returns Bonus QuerySet    
-def mainFilterWay(unparsed_json):
-    # Input data should be parsed(by parsingObject function, see above) JSON object
-    # {'sorting': 'dep_min_to_max', 'type': 'all', 'wager-js-range-slider': '0;42',
-    #  'bonus-js-range-slider': '0;5000', 'deposit-js-range-slider': '0;10000'}
-
-    # Parsing unparsed_json. Contains readable for FilterMechanism Class filter values  
-    obj = parsingObject(unparsed_json) 
-
-    # Returns Bonus QuerySet by taken filter values from parsed JSON/    
-    result_query = FilterBox(obj).render()
-    
-    return result_query
-
-# This is an rendering function for views
-# Takes as an argument search_query. 
-# Returns Bonus QuerySet
-def searchFilterWay(search_query):
-    # Returns Bonus QuerySet by search input
-    result_query = SearchBox(search_query).render()
-    
-    return result_query
-
-
-# This class is abstract class. It provides us flexible filter capabilities
-# Class provides us completed methods for filtering and sorting.
-
-# All you need to attach this to your filter: 
-# 1) Create Child-Class(it should ingerites FilterMechanism Class) for your Filter
-# 2) Write in Child CLass your own render method with Parent Class methods for your purposes
-
-# Parent Class returns nothing it just provides methods for filtering and sorting and environment for 
-#   sharing result QuerySet(Bonus/Suplier)
-# ! BE CAREFULL: 
-# ! PAY ATTENTION TO QUERYSET MODEL YOU ARE WORKING WITH. There BONUS QuerySet and Suplier QuerySet.
-# !     Do not mix it. To conversion there is provided 'suplier_to_bonus_converting' method
-class FilterMechanism:
-
-    # Mapping filters and fitler data or Q objects
-    # ? If you wanna add new filter/sorting. ADD HERE.
-
-    FILTER_LIST = {
-        'sorting': {
-            'bon_max_to_min': 'dep',
-            'bon_min_to_max': '-dep',
-            'dep_min_to_max': 'bonus_digit',
-            'dep_max_to_min': '-bonus_digit',
-            'doa_old_to_new': 'doa',
-            'doa_new_to_old': '-doa',
-            'wager_min_to_max': 'wager',
-            'wager_max_to_min': '-wager',
-            # 'ttl_min_to_max': 'ttl',
-            # 'ttl_max_to_min': '-ttl',
-        },
-
-        'type': {
-            'casino': Q(suplier_type=0),
-            'betting': Q(suplier_type=1),
-        },
-
-
-        # ?Suplier checkboxes
-        'license': Q(ca_license_bool=True),
-        # 'safe': ,
-        # 'fresh':,
-
-        # ?Bonus checkboxes
-        'nodep': Q(dep_bool=False),  
-        # 'season': Q(),
-        
-    }
-    
-    def __init__(self, parsed_JSON):
-        self.parsed_JSON = parsed_JSON
-
-# ?VITAL method. Creates first instance of result QuerySet(Suplier)
-# Fetches Suplier instances by certain type.
-# e.g. Casino/Betting/All. Fetches all Casino Suplier instances(all casinos in current DB)
-    def fetchType(self):
-
-        # Type cheking
-        # Creates self.resultQuery. Result QuerySet with Supliers taken by filter 'type' 
-        if 'type' in self.parsed_JSON and self.parsed_JSON['type'] != 'all':
-            _ = self.parsed_JSON['type']
-            self.resultQuery = Suplier.objects.filter(FilterMechanism.FILTER_LIST['type'][_])
-        else:
-            # Happens if 'type' is 'all' or something got wrong
-            self.resultQuery = Suplier.objects.all()
-
-        # It also cant return result Suplier QuerySet 
-        return self.resultQuery
-
-# Apply checkboxes for Suplier model
-    def checkboxSuplierFilter(self):
-        # ? Vital note. The method gotta be called before conversion 
-
-        # License checking
-        if 'license' in self.parsed_JSON:
-            self.resultQuery = self.resultQuery.filter(FilterMechanism.FILTER_LIST['license'])
-        # CREATE HERE ANY FILTERS FOR SUPLIER MODEL
-
-        #        
-
-# Apply checkboxes for Bonus model
-    def checkboxBonusFilter(self):
-        # ? Vital note. The method gotta be called after conversion 
-        
-        # Nodep checking 
-        if 'nodep' in self.parsed_JSON:
-            self.bonuses_result = self.bonuses_result.filter(FilterMechanism.FILTER_LIST['nodep'])
-        # CREATE HERE ANY FILTERS FOR BONUS MODEL
-        
-        #
-
-# Apply range slider filters for result Bonus QuerySet 
-    def wagerFilter(self):
-        # Range sliders
-        self.bonuses_result = self.bonuses_result.filter( 
-            Q(wager__range = self.parsed_JSON['wager-js-range-slider'].split(';')) &\
-            Q(dep__range = self.parsed_JSON['deposit-js-range-slider'].split(';')) &\
-            Q(bonus_digit__range = self.parsed_JSON['bonus-js-range-slider'].split(';')) \
-            # If you wanna add a new range-slider, just add below
-
-            )
-# Bonus searching
-    def searching(self, search_input):
-        self.bonuses_result = Bonus.objects.filter(
-            Q(two_word_desc__icontains=search_input)
-            | Q(bonus_desc__icontains=search_input)
-            | Q(bonus_digit__icontains=search_input)
-            | Q(dep__icontains=search_input)
-            # Q object for suplier title 
-            | Q(suplier__title__icontains=search_input)
-            )
-        return self.bonuses_result
-
-# Sorting
-    def sorting(self):
-        # It gotta be occured after all filters in the order.
-        self.bonuses_result = self.bonuses_result.order_by(FilterMechanism.FILTER_LIST['sorting'][self.parsed_JSON['sorting']])
-        
-
-# Converts Suplier result queryset to Bonus result query set
-# It is a vital method, cause we should return to django templates Bonus queryset
-    def _suplier_to_bonus_converting(self):
-        #! Just do not touch this method
-        #? Pretty weird way to merge 2 querysets. Look for a better decision 
-        self.bonuses_result = Bonus.objects.none()
-        
-        for suplier in self.resultQuery:
-            self.bonuses_result =  self.bonuses_result | suplier.bonus_set.all()
-        
-        return self.bonuses_result
-
-    def __str__(self):
-        return self.resultQuery
-    
-# FILTERING ROADMAP:
-#
-# 1) We gotta filter by selected Suplier type(Casino/Betting/All...)
-# We fetch type results first and then work with results
-# 2) Check and apply Suplier checkboxes
-# 
-# ?4) Converting Suplier result Query Set into Bonus result Query Set
-# ? Pay attention we work with Suplier Queryset before conversion. 
-# And after conversion we work with Bonus Result QuerySet 
-#
-# 5) Check and apply Bonus checkboxes
-# 6) Aplly Range sliders params(wager, bonus, deposit.....)
-# 
-# 7) Sorting Bonus Query Set result 
-#
-# SCHEME OF FILTERING(this is how FilterBox render method works) 
-#   TYPE -> SUPLIER CHECKBOXES -> COVERSION -> BONUS CHECKBOXES -> RANGE SLIDERS\
-#               -> SORTING ----> Result Bonus Queryset 
-#
-
-# Class creates filter construction with applying in certain order.
-# FilterBox class is a child class of FilterMechanism
-# ! One filter - one instance
-# # e.g. FilterBox instance that constructs SearchBox\FilterBox\..
-# ......whatever what has to search\fetch\find\sort smt 
-class FilterBox(FilterMechanism):
-    def __init__(self, parsed_JSON):
-        self.parsed_JSON = parsed_JSON
-        # invokes FilterMechanism.__init__
-        super().__init__(parsed_JSON)
-        
-# ?Vital method. The method creates filter construction and defines order of applying
-# You can see example of using this class and method above
-# Remember. Order - is super important here.
-    def render(self):
-        # Type filter
-        # It always gotta be first in the order.
-        # It creates flow object(resultQuery/bonusQuery....the var contains our result QuerySet)
-        self.suplier_query = self.fetchType()
-        self.checkboxSuplierFilter()
-        # Add code below if you wanna add smt for Suplier model
-
-
-        # Converting flow object from suplier to bonus
-        self._suplier_to_bonus_converting()
-        
-        self.checkboxBonusFilter()
-        # Add code below if you wanna add smt for Bonus model
-
-
-        # Silder-range filters
-        self.wagerFilter()
-        
-        # Sorting. Sorting uses always last in the order
-        self.sorting()
-
-
-        # Returns Bonus Query Set
-        # It takes self.bonus_result(aka flow object) from Class attributes. When any method calls, it rewrites flow object
-        return self.bonuses_result
-
-    def __str__(self):
-        return self.bonuses_result
-
-# Class for searching
-class SearchBox(FilterMechanism):
-    def __init__(self, search_input):
-        self.search_input = search_input
-        # invokes FilterMechanism.__init__
-        super().__init__(search_input)
-        
-    def render(self):
-        self.searching(self.search_input)
-        
-        return self.bonuses_result
-
-    def __str__(self):
-        return self.bonuses_result

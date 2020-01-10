@@ -1,1 +1,0 @@
-alert('Main JS is connected successfully');

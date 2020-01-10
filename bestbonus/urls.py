@@ -27,9 +27,10 @@ from bestbonus import views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.bonusRating, name='rating' ),
-    path('ajax-search/', views.ajaxSearch)
+    # path('ajax-search/', views.ajaxSearch),
+    path('ajax-search/', views.search_ajax),
+    path('ajax-filter/', views.filter_ajax),
 
-    
 ]
 
 if settings.DEBUG:
