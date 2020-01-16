@@ -1,36 +1,36 @@
 {% load static %}
-{% if bonuses %}   
+{% if bonuses %}
 
-    <div class='contentMeta text-center'>
-        <h3>{{ bonuses_meta.title }}({{ bonuses_meta.count }})</h3>
-        <p>{{ bonuses_meta.description }}</p>
-    </div>
-    <!-- Card block -->
-    <div class="card-block">
-        
-        <!-- Card deck -->
-        <!-- <div class="card-deck"> -->
+<div class='contentMeta text-center'>
+    <h3>{{ bonuses_meta.title }}({{ bonuses_meta.count }})</h3>
+    <p>{{ bonuses_meta.description }}</p>
+</div>
+<!-- Card block -->
+<div class="card-block">
 
-        {% for bonus in bonuses %}
-        
+    <!-- Card deck -->
+    <!-- <div class="card-deck"> -->
 
-        <!-- Card -->
-        <div class="card mb-4">
+    {% for bonus in bonuses %}
 
-            <!--Card image-->
-            <div class="view overlay">        
-                {% if bonus.image %}
-                    <img class="card-img-top" src="{{ bonus.image.url }}" alt="{{ bonus.suplier }}">
-                {% else %}
-                    <img class="card-img-top" src="{{ bonus.suplier.image.url }}" alt="{{ bonus.suplier }}">
-                {% endif %}
+
+    <!-- Card -->
+    <div class="card mb-4">
+
+        <!--Card image-->
+        <div class="view overlay">
+            {% if bonus.image %}
+            <img class="card-img-top" src="{{ bonus.image.url }}" alt="{{ bonus.suplier }}">
+            {% else %}
+            <img class="card-img-top" src="{{ bonus.suplier.image.url }}" alt="{{ bonus.suplier }}">
+            {% endif %}
 
             <a href="#!">
                 <div class="mask rgba-white-slight"></div>
             </a>
-            </div>
+        </div>
 
-            <div class="card-body">
+        <div class="card-body">
             <h4 class="card-title">{{ bonus.two_word_desc }}</h4>
 
             <hr>
@@ -38,38 +38,40 @@
             <hr>
             <div class="card-meta-info">
 
-                    <p class="card-text"><i class="fas fa-money-check-alt"></i> Депозит:  {% if bonus.dep_bool %} {{ bonus.dep }} {% else %} {{ bonus.bonus_bool|yesno:'Да,Нет,Мб' }} {% endif %}</p>
-                    <p class="card-text"><i class="fas fa-coins"></i> Вагер {{ bonus.wager }}  Тип: {{ bonus.bonus_type }}</p>
-                    <p class="card-text"><i class="fas fa-pager"></i> Добавлен: {{ bonus.doa }} <br> 
-                        <i class="fas fa-stopwatch"></i> Срок жизни:{{ bonus.tll }} </p>
-                
-                </div>
-                    
-                    <a href="">Другие бонусы от <span>{{ bonus.suplier }}</span></a>
-
-                <button type="button" class="btn btn-green btn-md">Забрать бонус</button>
+                <p class="card-text"><i class="fas fa-money-check-alt"></i> Депозит: {% if bonus.dep_bool %}
+                    {{ bonus.dep }} {% else %} {{ bonus.bonus_bool|yesno:'Да,Нет,Мб' }} {% endif %}</p>
+                <p class="card-text"><i class="fas fa-coins"></i> Вагер {{ bonus.wager }} Тип: {{ bonus.bonus_type }}
+                </p>
+                <p class="card-text"><i class="fas fa-pager"></i> Добавлен: {{ bonus.doa }} <br>
+                    <i class="fas fa-stopwatch"></i> Срок жизни:{{ bonus.tll }} </p>
 
             </div>
 
-        </div>
-        <!-- Card -->
+            <a href="">Другие бонусы от <span>{{ bonus.suplier }}</span></a>
 
-        {% endfor %}
+            <button type="button" class="btn btn-green btn-md">Забрать бонус</button>
+
+        </div>
+
+    </div>
+    <!-- Card -->
+
+    {% endfor %}
     <!-- </div> -->
 
-    </div>
-            
-    <!-- Paginator -->
-    {% if bonuses.has_next %}
-    <div class='paginate-block'>
-        <!-- <button id='paginatorButton1' class='btn btn-green btn-md paginate-button'>БОЛЬШЕ</button> -->
-        <button id='paginatorButton1' type="button" class="btn btn-primary btn-sm paginate-button">Больше</button>
-    </div>
-    {% endif %}
-    <!-- /Paginator -->
-    {% else %}
-    <div class='contentMeta text-center'>
-            <h3>Бонусов не найдено ):</h3>
-            <img width="480px" src="{% static 'hiclipart.com(5).png' %}" alt="">
-        </div>
-    {% endif%}
+</div>
+
+<!-- Paginator -->
+{% if bonuses.has_next %}
+<div class='paginate-block'>
+    <!-- <button id='paginatorButton1' class='btn btn-green btn-md paginate-button'>БОЛЬШЕ</button> -->
+    <button id='paginatorButton1' type="button" class="btn btn-primary btn-sm paginate-button">Больше</button>
+</div>
+{% endif %}
+<!-- /Paginator -->
+{% else %}
+<div class='contentMeta text-center'>
+    <h3>Бонусов не найдено ):</h3>
+    <img width="480px" src="{% static 'hiclipart.com(5).png' %}" alt="">
+</div>
+{% endif%}

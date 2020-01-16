@@ -44,7 +44,7 @@ python manage.py runscript delete_mock --script-args bonus
 python manage.py runscript delete_mock --script-args casino
 
 """
-from bestbonus import models
+from core import models
 
 
 

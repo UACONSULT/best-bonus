@@ -1,160 +1,185 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block 'content' %}
-    <!-- Desc block -->
-    <header>
-        <div id='descblock' class='container'>
-            <div>
-                <h3 class='text-center'>Bestbonus - an application for bonus searching gambling, betting </h3>
-                    <hr>
-                <p>Completly free and open-source application what can find any bonus for your purposes</p>
-                <p>    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+<!-- Desc block -->
+<header>
+    <div id='descblock' class='container'>
+        <div>
+            <h3 class='text-center'>Bestbonus - an application for bonus searching gambling, betting </h3>
+            <hr>
+            <p>Completly free and open-source application what can find any bonus for your purposes</p>
+            <p> Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et
+                dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip
+                ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
+                fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia
+                deserunt mollit anim id est laborum.</p>
 
-                <button type="button" class="btn btn-deep-orange">ЦЕПАНУТЬ БОНУС</button>
-            </div>
-
-            <!-- <img src="{% static 'bonus2.png' %}" alt=""> -->
-            <img src="{% static 'pin-up-png-18.png' %}" alt="">
+            <button type="button" class="btn btn-deep-orange">ЦЕПАНУТЬ БОНУС</button>
         </div>
-    </header>
 
-    <!-- Adv block -->
-    <!-- <div>
+        <!-- <img src="{% static 'bonus2.png' %}" alt=""> -->
+        <img src="{% static 'pin-up-png-18.png' %}" alt="">
+    </div>
+</header>
+
+<!-- Adv block -->
+<!-- <div>
     </div> -->
 
-    <!-- Sidebar  -->
-    
-    
-    <!-- Content block -->
-    <div id='mainblock'>
+<!-- Sidebar  -->
+
+
+<!-- Content block -->
+<div id='mainblock'>
 
 
 
-<a id='filterbox-anchor' href=""></a>
-<aside class='card'>
-    <form id='filter-form' action="">
-        <ul>
-            <!-- Sorting dropdown -->
-            <li>
-                <p class='text-center'>Сортировать по </p>
-                
-                <select name='sorting' id='sorting-select' class="custom-select custom-select-sm mb-3">
-                    <option value="dep_min_to_max" selected>Депозиту(от меньшего к большему)</option>
-                    <option value="dep_max_to_min">Депозиту(от большего к меньшему)</option>
+    <a id='filterbox-anchor' href=""></a>
+    <aside class='card'>
+        <form id='filter-form' action="">
+            <ul>
+                <!-- Sorting dropdown -->
+                <li>
+                    <p class='text-center'>Сортировать по </p>
 
-                    <option value="bon_min_to_max">Размеру бонуса(от меньшего к большему)</option>
-                    <option value="bon_max_to_min">Размеру бонуса(от большего к меньшему)</option>
-                    <option value="doa_old_to_new">Дате создания(от старых к новым)</option>
-                    <option value="doa_new_to_old">Дате создания(от новых к старым)</option>
+                    <select name='sorting' id='sorting-select' class="custom-select custom-select-sm mb-3">
+                        <option value="dep_min_to_max" selected>Депозиту(от меньшего к большему)</option>
+                        <option value="dep_max_to_min">Депозиту(от большего к меньшему)</option>
 
-                    <option value="wager_min_to_max">Вагеру(от 0)</option>
-                    <option value="wager_max_to_min">Вагеру(до 0)</option>
-            
-                    <option value="ttl_min_to_max">Время жизни бонуса(от меньшего)</option>
-                    <option value="ttl_max_to_min">Время жизни бонуса(от большего)</option>
-                </select>        
-            </li><hr>
-            
-            <li>
-                <div class="custom-control custom-checkbox mb-3">
-                    <input type="checkbox" class="custom-control-input" id="customCheck1" name="nodep">
-                    <label class="custom-control-label" for="customCheck1">Бездепозитные<span>({{ filter_box_meta.nodep_count }})</span></label>
+                        <option value="bon_min_to_max">Размеру бонуса(от меньшего к большему)</option>
+                        <option value="bon_max_to_min">Размеру бонуса(от большего к меньшему)</option>
+                        <option value="doa_old_to_new">Дате создания(от старых к новым)</option>
+                        <option value="doa_new_to_old">Дате создания(от новых к старым)</option>
 
-                </div>
-                <div class="custom-control custom-checkbox mb-3">
-                    <input type="checkbox" class="custom-control-input" id="customCheck2" name="license">
-                    <label class="custom-control-label" for="customCheck2">Лицензионные<span>({{ filter_box_meta.license_count }})</span></label>
-                </div>
-                <div class="custom-control custom-checkbox mb-3">
-                        <input type="checkbox" class="custom-control-input" id="customCheck3" name="safe">
-                        <label class="custom-control-label" for="customCheck3">Надежные компании<span>({{ filter_box_meta.safe_count }})</span></label>
-                </div>
-                <div class="custom-control custom-checkbox mb-3">
-                        <input type="checkbox" class="custom-control-input" id="customCheck4" name="fresh">
-                        <label class="custom-control-label" for="customCheck4">Свежые<span>({{ filter_box_meta.safe_count }})</span></label>
-                </div>
-                <div class="custom-control custom-checkbox mb-3">
-                        <input type="checkbox" class="custom-control-input" id="customCheck5" name="season">
-                        <label class="custom-control-label" for="customCheck5">Сезонные<span>({{ filter_box_meta.season_count }})</span></label>
-                </div>    
+                        <option value="wager_min_to_max">Вагеру(от 0)</option>
+                        <option value="wager_max_to_min">Вагеру(до 0)</option>
+
+                        <option value="ttl_min_to_max">Время жизни бонуса(от меньшего)</option>
+                        <option value="ttl_max_to_min">Время жизни бонуса(от большего)</option>
+                    </select>
+                </li>
                 <hr>
-            </li>
-            
-            <!-- Все/Казино(563)/БК(435)/Кейсы(201) -->
-            <li>
-                <select name='type' id='type_select' class="custom-select custom-select-sm mb-3">
-                    <option value="all" selected>Все<span>({{ filter_box_meta.all }})</span></option>
-                    <option value="casino">Казино<span>({{ filter_box_meta.casino }})</span></option>
-                    <option value="betting">БК<span>({{ filter_box_meta.betting }})</span></option>
-                </select>
-            </li><hr>
+
+                <li>
+                    <div class="custom-control custom-checkbox mb-3">
+                        <input type="checkbox" class="custom-control-input" id="customCheck1" name="nodep">
+                        <label class="custom-control-label"
+                            for="customCheck1">Бездепозитные<span>({{ filter_box_meta.nodep_count }})</span></label>
+
+                    </div>
+                    <div class="custom-control custom-checkbox mb-3">
+                        <input type="checkbox" class="custom-control-input" id="customCheck2" name="license">
+                        <label class="custom-control-label"
+                            for="customCheck2">Лицензионные<span>({{ filter_box_meta.license_count }})</span></label>
+                    </div>
+                    <div class="custom-control custom-checkbox mb-3">
+                        <input type="checkbox" class="custom-control-input" id="customCheck3" name="safe">
+                        <label class="custom-control-label" for="customCheck3">Надежные
+                            компании<span>({{ filter_box_meta.safe_count }})</span></label>
+                    </div>
+                    <div class="custom-control custom-checkbox mb-3">
+                        <input type="checkbox" class="custom-control-input" id="customCheck4" name="fresh">
+                        <label class="custom-control-label"
+                            for="customCheck4">Свежые<span>({{ filter_box_meta.safe_count }})</span></label>
+                    </div>
+                    <div class="custom-control custom-checkbox mb-3">
+                        <input type="checkbox" class="custom-control-input" id="customCheck5" name="season">
+                        <label class="custom-control-label"
+                            for="customCheck5">Сезонные<span>({{ filter_box_meta.season_count }})</span></label>
+                    </div>
+                    <hr>
+                </li>
+
+                <!-- Все/Казино(563)/БК(435)/Кейсы(201) -->
+                <li>
+                    <select name='type' id='type_select' class="custom-select custom-select-sm mb-3">
+                        <option value="all" selected>Все<span>({{ filter_box_meta.all }})</span></option>
+                        <option value="casino">Казино<span>({{ filter_box_meta.casino }})</span></option>
+                        <option value="betting">БК<span>({{ filter_box_meta.betting }})</span></option>
+                    </select>
+                </li>
+                <hr>
 
 
 
-            <!-- Вагер -->
-            <li class='custom-range-input-outer'>
-                <p class='text-center'>Вагер</p>
-    
-                <input id='wager-js-range-slider' data-to={{ filter_box_meta.wager_range_max }} data-max={{ filter_box_meta.wager_range_max }} type="text" class="js-range-slider" name="wager-js-range-slider" value="" />
-    
-                <div class='custom-range-input-block'>
-                    <input id='wager_range_input_from' type="text" class="form-control" placeholder="0">
-                    <input id='wager_range_input_to' type="text" class="form-control" placeholder="{{ filter_box_meta.wager_range_max }}x">
-                </div>
-            </li><hr>
+                <!-- Вагер -->
+                <li class='custom-range-input-outer'>
+                    <p class='text-center'>Вагер</p>
+
+                    <input id='wager-js-range-slider' data-to={{ filter_box_meta.wager_range_max }}
+                        data-max={{ filter_box_meta.wager_range_max }} type="text" class="js-range-slider"
+                        name="wager-js-range-slider" value="" />
+
+                    <div class='custom-range-input-block'>
+                        <input id='wager_range_input_from' type="text" class="form-control" placeholder="0">
+                        <input id='wager_range_input_to' type="text" class="form-control"
+                            placeholder="{{ filter_box_meta.wager_range_max }}x">
+                    </div>
+                </li>
+                <hr>
 
 
-            <!-- Размер бонуса -->
-            <li class='custom-range-input-outer'>
-                <p class='text-center'>Размер бонуса</p>
-    
-                <input id='bonus-js-range-slider' data-to={{ filter_box_meta.bonus_range_max }} data-max={{ filter_box_meta.bonus_range_max }} type="text" class="js-range-slider" name="bonus-js-range-slider" value="" />    
-    
-                <div class='custom-range-input-block'>
-                    <input id='bonus_range_input_from' type="text" class="form-control" placeholder="От 0">
-                    <input id='bonus_range_input_to' type="text" class="form-control" placeholder="До {{ filter_box_meta.bonus_range_max }}$">
-                </div>
-            </li><hr>            
+                <!-- Размер бонуса -->
+                <li class='custom-range-input-outer'>
+                    <p class='text-center'>Размер бонуса</p>
 
-            <!-- Размер депозита для бонуса -->
-            <li class='custom-range-input-outer'>
-                <p class='text-center'>Размер депозита</p>
+                    <input id='bonus-js-range-slider' data-to={{ filter_box_meta.bonus_range_max }}
+                        data-max={{ filter_box_meta.bonus_range_max }} type="text" class="js-range-slider"
+                        name="bonus-js-range-slider" value="" />
 
-                <input id='deposit-js-range-slider' data-to={{ filter_box_meta.dep_range_max }} data-max={{ filter_box_meta.dep_range_max }} type="text" class="js-range-slider" name="deposit-js-range-slider" value="" />
+                    <div class='custom-range-input-block'>
+                        <input id='bonus_range_input_from' type="text" class="form-control" placeholder="От 0">
+                        <input id='bonus_range_input_to' type="text" class="form-control"
+                            placeholder="До {{ filter_box_meta.bonus_range_max }}$">
+                    </div>
+                </li>
+                <hr>
+
+                <!-- Размер депозита для бонуса -->
+                <li class='custom-range-input-outer'>
+                    <p class='text-center'>Размер депозита</p>
+
+                    <input id='deposit-js-range-slider' data-to={{ filter_box_meta.dep_range_max }}
+                        data-max={{ filter_box_meta.dep_range_max }} type="text" class="js-range-slider"
+                        name="deposit-js-range-slider" value="" />
                     <div class='custom-range-input-block'>
                         <input id='deposit_range_input_from' type="text" class="form-control" placeholder="От 0">
-                        <input id='deposit_range_input_to' type="text" class="form-control" placeholder="До {{ filter_box_meta.dep_range_max }}$">
+                        <input id='deposit_range_input_to' type="text" class="form-control"
+                            placeholder="До {{ filter_box_meta.dep_range_max }}$">
                     </div>
-            </li><hr>
-            
-            <!-- НАЙТИ/СБРОСИТЬ -->
+                </li>
+                <hr>
 
-            <li>
-                <div class="btn-group">
-                    <button type="submit" class="btn btn-success">Применить</button>
-                    <button id='filter-refresh-button' type="button" class="btn btn-danger">Сбросить</button>
-                </div> 
-            </li>
+                <!-- НАЙТИ/СБРОСИТЬ -->
 
-        </ul>
-    </form>
-</aside>
+                <li>
+                    <div class="btn-group">
+                        <button type="submit" class="btn btn-success">Применить</button>
+                        <button id='filter-refresh-button' type="button" class="btn btn-danger">Сбросить</button>
+                    </div>
+                </li>
+
+            </ul>
+        </form>
+    </aside>
 
     <!-- Content block-->
     <div id='main-content'>
         <!-- Searchbox -->
         <div id='searchbox'>
             <form class="form-inline">
-                <input id="search-field-text" name="q" value='' type="text" class="form-control" placeholder="Казино/бонус">
+                <input id="search-field-text" name="q" value='' type="text" class="form-control"
+                    placeholder="Казино/бонус">
                 <div class="input-group-append">
-                    <button disabled id="search-field-button" class="btn btn-success" type="submit"><i class="fas fa-search"></i></button>  
+                    <button disabled id="search-field-button" class="btn btn-success" type="submit"><i
+                            class="fas fa-search"></i></button>
                 </div>
                 <button id='clear_button' class="btn btn-outline-danger btn-sm" type="submit">Сбросить фильтр</button>
-                
-                
-            </form>    
+
+
+            </form>
         </div>
-    <hr>
+        <hr>
 
         <div id="replaceable-cardblock">
             {% include 'cardblock.html' with bonuses=bonuses bonuses_meta=bonuses_meta %}
@@ -163,7 +188,7 @@
         </div>
 
     </div>
-    
+
 </div>
 
 

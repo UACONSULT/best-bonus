@@ -1,5 +1,6 @@
 import json
 
+from django.contrib.auth.models import User, Group
 from django.shortcuts import render
 from django.db.models import Q
 from django.template.loader import render_to_string
@@ -8,8 +9,7 @@ from django.http import JsonResponse
 from django.contrib import messages
 from django.views.generic import View
 
-from bestbonus import models
-
+from core import models
 
 
 # Returns the main page. Paginates bonuses via AJAX

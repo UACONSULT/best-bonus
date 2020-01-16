@@ -10,7 +10,7 @@ from django.urls import reverse
 from django.db import IntegrityError 
 
 from bestbonus.settings import BASE_DIR
-from bestbonus import models
+from core import models
 
 
 

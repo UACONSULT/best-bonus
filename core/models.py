@@ -157,7 +157,7 @@ class Bonus(models.Model):
         pass
 
     @classmethod
-    def _filtering(cls, parsed_JSON):
+    def filtering(cls, parsed_JSON):
         """
         Implementation of Filter Box filtering 
 
@@ -232,7 +232,7 @@ class Bonus(models.Model):
         obj = get_parsed_json(unparsed_JSON)
 
         # Returns Bonus queryset by filter params from parsed JSON    
-        result_query = cls._filtering(obj)
+        result_query = cls.filtering(obj)
 
         return result_query
 
@@ -252,6 +252,18 @@ class Bonus(models.Model):
         
         # Returns Bonus queryset by search input
         return bonuses_result
+
+    @classmethod
+    def get_wager_max(cls):
+        return Bonus.objects.aggregate(Max('wager'))['wager__max']
+
+    @classmethod
+    def get_bonus_max(cls):
+        return Bonus.objects.aggregate(Max('bonus_digit'))['bonus_digit__max']
+
+    @classmethod
+    def get_dep_max(cls):
+        return Bonus.objects.aggregate(Max('dep'))['dep__max']
 
     class Meta:
         ordering = ['-bonus_digit']
@@ -287,6 +299,7 @@ def filterbox_meta_count():
     filter_box_meta['casino'] = Bonus.objects.filter(Q(suplier__suplier_type=0)).count()
     filter_box_meta['betting'] = Bonus.objects.filter(Q(suplier__suplier_type=1)).count()
 
+    # TODO Replace maxes below into Bonus methods and cover by @property. Check out how the decision will work with Serializer default
     filter_box_meta['wager_range_max'] = Bonus.objects.aggregate(Max('wager'))['wager__max']
     filter_box_meta['bonus_range_max'] = Bonus.objects.aggregate(Max('bonus_digit'))['bonus_digit__max']
     filter_box_meta['dep_range_max'] = Bonus.objects.aggregate(Max('dep'))['dep__max']

@@ -1,5 +1,5 @@
 from django.contrib import admin
-from bestbonus import models
+from core import models
 
 
 class SuplierAdmin(admin.ModelAdmin):

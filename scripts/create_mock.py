@@ -56,7 +56,7 @@ from loremipsum import get_sentence
 from random import randrange, randint, choice
 from django.utils import timezone
 
-from bestbonus import models
+from core import models
 
 
 # showBonuses returns all existing bonuses from current DB
